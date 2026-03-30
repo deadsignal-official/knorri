@@ -2,7 +2,7 @@
   "name": "Knorri - Jouw Slimme Buddy",
   "short_name": "Knorri",
   "description": "Jouw persoonlijke AI-buddy voor alles!",
-  "start_url": "./",
+  "start_url": "/",
   "scope": "./",
   "display": "standalone",
   "orientation": "portrait",
