@@ -1,17 +1,22 @@
 {
-  "name": "Knorri - Jouw Slimme Buddy",
-  "short_name": "Knorri",
-  "description": "Jouw persoonlijke AI-buddy voor alles!",
-  "start_url": "/",
-  "display": "standalone",
-  "background_color": "#FFF5F9",
-  "theme_color": "#FF6B9D",
-  "orientation": "portrait",
-  "icons": [
-    {
-      "src": "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🧸</text></svg>",
-      "sizes": "192x192",
-      "type": "image/svg+xml"
-    }
-  ]
+"name": "Knorri AI",
+"short_name": "Knorri",
+"description": "Knorri is jouw AI vriend die helpt met doelen, planning, games, koken, mode en meer.",
+"start_url": "./index.html",
+"display": "standalone",
+"background_color": "#0f172a",
+"theme_color": "#6366f1",
+"orientation": "portrait",
+"icons": [
+{
+"src": "icon-192.png",
+"sizes": "192x192",
+"type": "image/png"
+},
+{
+"src": "icon-512.png",
+"sizes": "512x512",
+"type": "image/png"
+}
+]
 }
