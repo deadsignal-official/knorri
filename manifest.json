@@ -1,0 +1,95 @@
+{
+  "id": "/knorri/",
+  "name": "Knorri - Jouw Slimme Buddy",
+  "short_name": "Knorri",
+  "description": "Jouw persoonlijke AI-buddy voor alles — chat, planning, doelen, mode lab en meer!",
+  "start_url": "/knorri/index.html",
+  "scope": "/knorri/",
+  "display": "standalone",
+  "display_override": ["window-controls-overlay", "standalone", "minimal-ui"],
+  "orientation": "portrait",
+  "background_color": "#FFF5F9",
+  "theme_color": "#FF6B9D",
+  "lang": "nl",
+  "dir": "ltr",
+  "categories": ["productivity", "lifestyle", "education"],
+  "prefer_related_applications": false,
+  "iarc_rating_id": "e84b072d-71b3-4d3e-86ae-31a8ce4e53b7",
+  "launch_handler": {
+    "client_mode": "focus-existing"
+  },
+  "icons": [
+    {
+      "src": "/knorri/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/knorri/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/knorri/icon-192-maskable.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "maskable"
+    },
+    {
+      "src": "/knorri/icon-512-maskable.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
+  ],
+  "screenshots": [
+    {
+      "src": "/knorri/screenshot1.png",
+      "sizes": "390x844",
+      "type": "image/png",
+      "form_factor": "narrow",
+      "label": "Knorri Chat op mobiel"
+    },
+    {
+      "src": "/knorri/screenshot2.png",
+      "sizes": "1280x800",
+      "type": "image/png",
+      "form_factor": "wide",
+      "label": "Knorri Dashboard"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "Nieuw gesprek",
+      "short_name": "Chat",
+      "description": "Start een nieuw gesprek met Knorri",
+      "url": "/knorri/index.html#chat",
+      "icons": [{ "src": "/knorri/icon-192.png", "sizes": "192x192" }]
+    },
+    {
+      "name": "Mijn Planning",
+      "short_name": "Planning",
+      "description": "Bekijk je weekplanning",
+      "url": "/knorri/index.html#planning",
+      "icons": [{ "src": "/knorri/icon-192.png", "sizes": "192x192" }]
+    },
+    {
+      "name": "Doelen",
+      "short_name": "Doelen",
+      "description": "Bekijk je doelen",
+      "url": "/knorri/index.html#goals",
+      "icons": [{ "src": "/knorri/icon-192.png", "sizes": "192x192" }]
+    }
+  ],
+  "share_target": {
+    "action": "/knorri/index.html",
+    "method": "GET",
+    "params": {
+      "title": "title",
+      "text": "text",
+      "url": "url"
+    }
+  }
+}

@@ -1,0 +1,2317 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="theme-color" content="#FF6B9D">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Knorri">
+<link rel="manifest" href="manifest.json">
+<title>Knorri 🧸</title>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&family=Fredoka+One&display=swap" rel="stylesheet">
+<style>
+:root{
+  --pink:#FF6B9D;--pink-l:#FFB3CE;--purple:#A855F7;--purple-l:#D8B4FE;
+  --yellow:#FCD34D;--orange:#FB923C;--green:#34D399;--blue:#60A5FA;--red:#F87171;
+  --bg:#FFF5F9;--card:#fff;--text:#2D1B4E;--soft:#8B7BA8;--border:#F0E6F6;
+  --shadow:0 8px 32px rgba(168,85,247,0.12);
+}
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
+html,body{height:100%;overflow:hidden;}
+body{font-family:'Nunito',sans-serif;background:var(--bg);color:var(--text);}
+body::before{content:'';position:fixed;top:-80px;left:-80px;width:260px;height:260px;background:radial-gradient(circle,#FFB3CE28,transparent 70%);border-radius:50%;pointer-events:none;z-index:0;}
+#app{height:100dvh;display:flex;flex-direction:column;max-width:430px;margin:0 auto;position:relative;z-index:1;}
+
+/* HEADER */
+header{background:linear-gradient(135deg,#FF6B9D,#A855F7);padding:10px 14px 12px;display:flex;align-items:center;gap:9px;flex-shrink:0;box-shadow:0 4px 20px rgba(168,85,247,0.35);}
+.h-bear{font-size:30px;animation:bounce 2.5s infinite;cursor:pointer;filter:drop-shadow(0 3px 6px rgba(0,0,0,0.2));}
+@keyframes bounce{0%,100%{transform:translateY(0) rotate(-5deg);}50%{transform:translateY(-5px) rotate(5deg);}}
+.h-info h1{font-family:'Fredoka One',sans-serif;font-size:20px;color:#fff;letter-spacing:1px;}
+.h-info p{font-size:10px;color:rgba(255,255,255,0.85);font-weight:700;}
+.h-right{margin-left:auto;display:flex;align-items:center;gap:8px;}
+.mic-btn{background:rgba(255,255,255,0.2);border:none;border-radius:10px;width:34px;height:34px;cursor:pointer;font-size:16px;display:flex;align-items:center;justify-content:center;transition:all 0.2s;flex-shrink:0;}
+.mic-btn.listening{background:rgba(255,100,100,0.5);animation:micpulse 1s infinite;}
+@keyframes micpulse{0%,100%{box-shadow:0 0 0 0 rgba(255,100,100,0.4);}50%{box-shadow:0 0 0 8px rgba(255,100,100,0);}}
+.h-dot{width:9px;height:9px;background:#34D399;border-radius:50%;box-shadow:0 0 0 3px rgba(52,211,153,0.3);animation:pdot 2s infinite;}
+@keyframes pdot{0%,100%{box-shadow:0 0 0 3px rgba(52,211,153,0.3);}50%{box-shadow:0 0 0 7px rgba(52,211,153,0.1);}}
+
+/* TAB BAR */
+.tab-bar{display:flex;overflow-x:auto;scrollbar-width:none;background:#fff;border-bottom:2px solid var(--border);flex-shrink:0;padding:0 2px;}
+.tab-bar::-webkit-scrollbar{display:none;}
+.tab-btn{flex-shrink:0;display:flex;flex-direction:column;align-items:center;gap:2px;padding:7px 9px;cursor:pointer;border:none;background:transparent;position:relative;min-width:52px;}
+.tab-btn .ti{font-size:18px;transition:transform 0.2s;}
+.tab-btn .tl{font-size:8.5px;font-weight:800;color:var(--soft);white-space:nowrap;font-family:'Nunito',sans-serif;}
+.tab-btn.active .tl{color:var(--purple);}
+.tab-btn.active::after{content:'';position:absolute;bottom:-2px;left:10%;width:80%;height:3px;background:linear-gradient(90deg,var(--purple),var(--pink));border-radius:2px 2px 0 0;}
+.tab-btn.active .ti{transform:scale(1.15);}
+
+/* MAIN */
+main{flex:1;overflow-y:auto;overflow-x:hidden;}
+main::-webkit-scrollbar{width:3px;}
+main::-webkit-scrollbar-thumb{background:var(--pink-l);border-radius:2px;}
+.screen{display:none;padding:12px;animation:fadeIn 0.25s ease;}
+.screen.active{display:block;}
+@keyframes fadeIn{from{opacity:0;transform:translateY(6px);}to{opacity:1;transform:translateY(0);}}
+
+/* CARDS & BASE */
+.card{background:#fff;border-radius:18px;padding:14px;margin-bottom:11px;box-shadow:var(--shadow);border:1.5px solid var(--border);}
+.card-title{font-family:'Fredoka One',sans-serif;font-size:14px;color:var(--purple);margin-bottom:9px;display:flex;align-items:center;gap:5px;}
+.sec-title{font-family:'Fredoka One',sans-serif;font-size:16px;color:var(--text);margin-bottom:11px;}
+.btn-p{background:linear-gradient(135deg,var(--purple),var(--pink));border:none;border-radius:13px;padding:10px 16px;color:#fff;font-family:'Nunito',sans-serif;font-size:12px;font-weight:800;cursor:pointer;box-shadow:0 4px 14px rgba(168,85,247,0.3);transition:transform 0.15s;}
+.btn-p:active{transform:scale(0.95);}
+.btn-o{background:#fff;border:2px solid var(--border);border-radius:13px;padding:8px 14px;color:var(--purple);font-family:'Nunito',sans-serif;font-size:11px;font-weight:800;cursor:pointer;transition:all 0.2s;}
+.btn-o:active{background:var(--purple);color:#fff;border-color:var(--purple);}
+.btn-full{width:100%;padding:12px;border-radius:14px;font-size:13px;}
+input,textarea,select{font-family:'Nunito',sans-serif;font-size:13px;font-weight:700;border:2px solid var(--border);border-radius:12px;padding:9px 12px;outline:none;color:var(--text);background:#fff;transition:border-color 0.2s;width:100%;}
+input:focus,textarea:focus,select:focus{border-color:var(--purple);}
+textarea{resize:none;}
+.tag{display:inline-block;padding:3px 9px;border-radius:9px;font-size:10px;font-weight:800;text-transform:uppercase;}
+.tag-school{background:#FEF3C7;color:#D97706;}.tag-sport{background:#D1FAE5;color:#059669;}
+.tag-hobby{background:#EDE9FE;color:#7C3AED;}.tag-eten{background:#FFE4E6;color:#E11D48;}
+.ai-box{background:linear-gradient(135deg,#fff0f7,#f5eeff);border:1.5px solid var(--pink-l);border-radius:14px;padding:13px;font-size:13px;font-weight:600;line-height:1.7;color:var(--text);margin-top:9px;white-space:pre-wrap;}
+.loading-ring{display:inline-block;width:15px;height:15px;border:3px solid rgba(168,85,247,0.2);border-top-color:var(--purple);border-radius:50%;animation:spin 0.7s linear infinite;vertical-align:middle;}
+@keyframes spin{to{transform:rotate(360deg);}}
+.loading-txt{text-align:center;padding:22px;color:var(--soft);font-weight:700;font-size:12px;}
+.add-row{display:flex;gap:6px;margin-top:9px;}
+.add-row input{flex:1;}
+
+/* CHAT */
+#chat-messages{display:flex;flex-direction:column;gap:9px;min-height:150px;}
+.msg{max-width:85%;padding:10px 13px;border-radius:15px;font-size:13px;line-height:1.55;font-weight:600;animation:msgPop 0.25s cubic-bezier(0.34,1.56,0.64,1);}
+@keyframes msgPop{from{opacity:0;transform:scale(0.88);}to{opacity:1;transform:scale(1);}}
+.msg-k{background:linear-gradient(135deg,#fff0f7,#f5eeff);border:1.5px solid var(--pink-l);align-self:flex-start;border-bottom-left-radius:4px;}
+.msg-u{background:linear-gradient(135deg,var(--purple),var(--pink));color:#fff;align-self:flex-end;border-bottom-right-radius:4px;}
+.msg-s{font-size:10px;font-weight:800;margin-bottom:3px;opacity:0.65;text-transform:uppercase;letter-spacing:0.4px;}
+.msg-k .msg-s{color:var(--purple);}.msg-u .msg-s{color:rgba(255,255,255,0.8);}
+.typing-row{display:flex;gap:4px;align-items:center;padding:10px 13px;}
+.t-dot{width:6px;height:6px;background:var(--pink);border-radius:50%;animation:tdot 1.2s infinite;}
+.t-dot:nth-child(2){animation-delay:0.2s;}.t-dot:nth-child(3){animation-delay:0.4s;}
+@keyframes tdot{0%,60%,100%{transform:translateY(0);opacity:0.4;}30%{transform:translateY(-6px);opacity:1;}}
+.chat-row{display:flex;gap:6px;align-items:flex-end;margin-top:9px;}
+.chat-row textarea{flex:1;border-radius:13px;padding:9px 11px;max-height:85px;}
+.send-btn{width:40px;height:40px;border-radius:11px;background:linear-gradient(135deg,var(--purple),var(--pink));border:none;cursor:pointer;font-size:17px;flex-shrink:0;box-shadow:0 4px 12px rgba(168,85,247,0.4);}
+.send-btn:disabled{opacity:0.5;}
+.quick-row{display:flex;gap:5px;flex-wrap:wrap;margin-bottom:9px;}
+.q-btn{background:#fff;border:1.5px solid var(--border);border-radius:16px;padding:5px 11px;font-family:'Nunito',sans-serif;font-size:11px;font-weight:800;color:var(--purple);cursor:pointer;}
+.q-btn:active{background:var(--purple);color:#fff;}
+.welcome{text-align:center;padding:12px 0 6px;}
+.w-bear{font-size:58px;display:block;animation:wobble 3s infinite;filter:drop-shadow(0 6px 14px rgba(168,85,247,0.2));cursor:pointer;}
+@keyframes wobble{0%,100%{transform:rotate(-8deg) scale(1);}25%{transform:rotate(8deg) scale(1.05);}50%{transform:rotate(-5deg);}75%{transform:rotate(5deg) scale(1.03);}}
+.welcome h2{font-family:'Fredoka One',sans-serif;font-size:18px;color:var(--purple);margin-top:5px;}
+.welcome p{font-size:11px;color:var(--soft);font-weight:700;margin-top:2px;}
+
+/* MOOD */
+.mood-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:7px;}
+.mood-btn{background:#fff;border:2px solid var(--border);border-radius:14px;padding:12px 5px;cursor:pointer;text-align:center;transition:all 0.2s cubic-bezier(0.34,1.56,0.64,1);display:flex;flex-direction:column;align-items:center;gap:4px;}
+.mood-btn.selected{border-color:var(--purple);background:linear-gradient(135deg,#f5eeff,#fff0f7);transform:scale(1.05);}
+.mood-emoji{font-size:26px;}.mood-label{font-size:9.5px;font-weight:800;color:var(--soft);}
+
+/* PLANNING */
+.day-tabs{display:flex;gap:4px;overflow-x:auto;scrollbar-width:none;margin-bottom:10px;}
+.day-tabs::-webkit-scrollbar{display:none;}
+.day-tab{flex-shrink:0;padding:6px 12px;border-radius:10px;border:1.5px solid var(--border);background:#fff;font-family:'Nunito',sans-serif;font-size:11px;font-weight:800;color:var(--soft);cursor:pointer;}
+.day-tab.active{background:linear-gradient(135deg,var(--purple),var(--pink));color:#fff;border-color:transparent;box-shadow:0 3px 10px rgba(168,85,247,0.3);}
+.task-item{display:flex;align-items:center;gap:9px;padding:9px;background:#fff;border-radius:11px;border:1.5px solid var(--border);margin-bottom:6px;}
+.task-item.done{opacity:0.4;}.task-item.done .task-text{text-decoration:line-through;}
+.task-chk{width:19px;height:19px;border-radius:6px;border:2px solid var(--border);cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:10px;}
+.task-item.done .task-chk{background:var(--green);border-color:var(--green);color:#fff;}
+.task-text{font-size:12px;font-weight:700;flex:1;}
+.alert-pill{background:linear-gradient(135deg,var(--yellow),var(--orange));color:#fff;border-radius:11px;padding:9px 13px;font-size:11px;font-weight:800;margin-bottom:9px;display:flex;align-items:center;gap:6px;box-shadow:0 4px 14px rgba(251,146,60,0.3);}
+
+/* GOALS */
+.goal-item{background:#fff;border-radius:13px;border:1.5px solid var(--border);padding:11px;margin-bottom:7px;}
+.goal-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:6px;}
+.goal-name{font-size:12px;font-weight:800;}
+.g-bar{height:6px;background:var(--border);border-radius:3px;overflow:hidden;margin-bottom:3px;}
+.g-fill{height:100%;border-radius:3px;background:linear-gradient(90deg,var(--purple),var(--pink));transition:width 0.5s cubic-bezier(0.34,1.56,0.64,1);}
+.g-pct{font-size:10px;font-weight:800;color:var(--soft);}
+.g-btns{display:flex;gap:4px;align-items:center;}
+.g-step{background:none;border:1px solid var(--border);border-radius:6px;padding:2px 7px;cursor:pointer;font-weight:800;font-size:11px;font-family:'Nunito',sans-serif;}
+
+/* KOOK */
+.ing-tags{display:flex;flex-wrap:wrap;gap:5px;margin-bottom:10px;min-height:28px;}
+.ing-tag{background:linear-gradient(135deg,#fff0f7,#f5eeff);border:1.5px solid var(--pink-l);border-radius:18px;padding:4px 11px;font-size:11px;font-weight:700;color:var(--purple);display:flex;align-items:center;gap:4px;}
+.ing-tag span{cursor:pointer;}
+.recipe-card{background:#fff;border-radius:16px;border:1.5px solid var(--border);padding:14px;margin-top:9px;}
+.recipe-card h3{font-family:'Fredoka One',sans-serif;font-size:15px;color:var(--purple);margin-bottom:7px;}
+.recipe-meta{display:flex;gap:10px;margin-bottom:9px;}
+.r-mi{display:flex;flex-direction:column;align-items:center;background:var(--bg);padding:5px 10px;border-radius:9px;}
+.r-mi span:first-child{font-size:14px;}.r-mi span:last-child{font-size:9px;font-weight:800;color:var(--soft);}
+.recipe-steps{counter-reset:step;}
+.recipe-step{padding:7px 0;border-bottom:1px solid var(--border);font-size:11.5px;font-weight:600;line-height:1.5;padding-left:26px;position:relative;}
+.recipe-step::before{counter-increment:step;content:counter(step);position:absolute;left:0;top:7px;background:linear-gradient(135deg,var(--purple),var(--pink));color:#fff;width:18px;height:18px;border-radius:5px;display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:800;}
+.recipe-step:last-child{border-bottom:none;}
+
+/* MODE LAB */
+.style-grid{display:grid;grid-template-columns:1fr 1fr;gap:7px;margin-bottom:10px;}
+.style-opt{background:#fff;border:2px solid var(--border);border-radius:13px;padding:9px;cursor:pointer;text-align:center;transition:all 0.2s;}
+.style-opt.picked{border-color:var(--purple);background:linear-gradient(135deg,#f5eeff,#fff0f7);}
+.style-opt .se{font-size:22px;display:block;}.style-opt .sl{font-size:10px;font-weight:800;color:var(--soft);margin-top:2px;}
+.outfit-display{background:linear-gradient(135deg,#1a0533,#2d0a5e);border-radius:18px;padding:18px;text-align:center;margin-top:9px;overflow:hidden;}
+.outfit-name{font-family:'Fredoka One',sans-serif;font-size:18px;color:#fff;margin-bottom:3px;}
+.outfit-desc{font-size:11px;color:rgba(255,255,255,0.7);font-weight:700;line-height:1.5;}
+.price-badge{display:inline-block;background:linear-gradient(135deg,var(--yellow),var(--orange));color:#fff;padding:5px 14px;border-radius:18px;font-weight:800;font-size:12px;margin-top:9px;}
+.sell-btn{margin-top:8px;display:block;background:linear-gradient(135deg,var(--green),#059669);border:none;border-radius:11px;padding:9px 18px;color:#fff;font-family:'Nunito',sans-serif;font-size:11px;font-weight:800;cursor:pointer;width:100%;}
+.coll-grid{display:grid;grid-template-columns:1fr 1fr;gap:7px;margin-top:9px;}
+.coll-item{background:linear-gradient(135deg,#1a0533,#2d0a5e);border-radius:13px;padding:11px;text-align:center;position:relative;}
+.c-name{font-size:10px;font-weight:800;color:#fff;}.c-price{font-size:9.5px;color:var(--yellow);font-weight:700;}
+.c-sold{position:absolute;top:5px;right:5px;background:var(--green);color:#fff;font-size:7px;font-weight:800;padding:2px 5px;border-radius:5px;}
+
+/* TOEKOMST */
+.dream-card{background:linear-gradient(135deg,#0f0020,#1a0040,#0a0030);border-radius:18px;padding:18px;margin-top:9px;}
+.dream-year{font-family:'Fredoka One',sans-serif;font-size:12px;color:rgba(255,255,255,0.4);margin-bottom:5px;}
+.dream-title{font-family:'Fredoka One',sans-serif;font-size:18px;color:#fff;margin-bottom:9px;}
+.dream-steps{display:flex;flex-direction:column;gap:5px;}
+.d-step{display:flex;gap:7px;align-items:flex-start;}
+.d-dot{width:7px;height:7px;background:linear-gradient(135deg,var(--pink),var(--purple));border-radius:50%;flex-shrink:0;margin-top:4px;}
+.d-txt{font-size:11.5px;color:rgba(255,255,255,0.75);font-weight:600;line-height:1.4;}
+
+/* GAME DEV */
+.project-card{background:#fff;border-radius:14px;border:1.5px solid var(--border);padding:12px;margin-bottom:9px;}
+.proj-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:7px;}
+.proj-name{font-size:13px;font-weight:800;}
+.proj-type{padding:2px 8px;border-radius:7px;font-size:9.5px;font-weight:800;}
+.proj-mc{background:#D1FAE5;color:#059669;}.proj-ue5{background:#EDE9FE;color:#7C3AED;}
+.proj-web{background:#DBEAFE;color:#2563EB;}.proj-other{background:#F3F4F6;color:#6B7280;}
+.proj-bar{height:5px;background:var(--border);border-radius:3px;overflow:hidden;margin:6px 0 3px;}
+.proj-fill{height:100%;background:linear-gradient(90deg,#059669,var(--green));border-radius:3px;}
+
+/* CASH */
+.bal-display{background:linear-gradient(135deg,#1a0533,var(--purple));border-radius:18px;padding:18px;text-align:center;margin-bottom:11px;}
+.bal-label{font-size:11px;color:rgba(255,255,255,0.7);font-weight:700;}
+.bal-amount{font-family:'Fredoka One',sans-serif;font-size:38px;color:#fff;margin:3px 0;}
+.bal-sub{font-size:10px;color:rgba(255,255,255,0.55);font-weight:700;}
+.tx-item{display:flex;align-items:center;gap:9px;padding:9px;background:#fff;border-radius:11px;border:1.5px solid var(--border);margin-bottom:6px;}
+.tx-icon{font-size:18px;width:32px;height:32px;background:var(--bg);border-radius:9px;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.tx-desc{font-size:11.5px;font-weight:800;}.tx-date{font-size:10px;color:var(--soft);font-weight:700;}
+.tx-amount{font-size:13px;font-weight:900;margin-left:auto;flex-shrink:0;}
+.tx-plus{color:#059669;}.tx-minus{color:#E11D48;}
+
+/* TRAINER */
+.wo-header{background:linear-gradient(135deg,#0d2200,#0f3d0f);border-radius:18px;padding:16px;text-align:center;margin-bottom:11px;}
+.wo-header h2{font-family:'Fredoka One',sans-serif;font-size:20px;color:#fff;}
+.wo-header p{font-size:11px;color:rgba(255,255,255,0.6);font-weight:700;margin-top:3px;}
+.ex-card{background:#fff;border-radius:14px;border:1.5px solid var(--border);padding:12px;margin-bottom:7px;display:flex;gap:10px;align-items:center;}
+.ex-num{width:32px;height:32px;background:linear-gradient(135deg,var(--purple),var(--pink));border-radius:9px;display:flex;align-items:center;justify-content:center;color:#fff;font-weight:900;font-size:13px;flex-shrink:0;}
+.ex-info h4{font-size:12px;font-weight:800;}.ex-info p{font-size:10.5px;color:var(--soft);font-weight:700;}
+.ex-badge{margin-left:auto;background:var(--bg);border-radius:7px;padding:3px 8px;font-size:10.5px;font-weight:800;color:var(--purple);flex-shrink:0;}
+.timer-display{background:linear-gradient(135deg,#0f0020,#1a0040);border-radius:18px;padding:20px;text-align:center;margin-bottom:11px;}
+.timer-num{font-family:'Fredoka One',sans-serif;font-size:50px;color:#fff;letter-spacing:2px;}
+.timer-label{font-size:11px;color:rgba(255,255,255,0.55);font-weight:700;}
+.timer-btns{display:flex;gap:7px;justify-content:center;margin-top:10px;}
+
+/* VERHAAL */
+.story-opts{display:grid;grid-template-columns:1fr 1fr;gap:7px;margin-bottom:10px;}
+.story-opt{background:#fff;border:2px solid var(--border);border-radius:13px;padding:10px;cursor:pointer;text-align:center;transition:all 0.2s;}
+.story-opt.picked{border-color:var(--purple);background:linear-gradient(135deg,#f5eeff,#fff0f7);}
+.story-opt .se{font-size:20px;display:block;}.story-opt .sl{font-size:10px;font-weight:800;color:var(--soft);margin-top:2px;}
+.story-display{background:linear-gradient(135deg,#fff8f0,#fff0f7);border:1.5px solid var(--pink-l);border-radius:16px;padding:16px;margin-top:9px;font-size:12.5px;font-weight:600;line-height:1.8;color:var(--text);}
+.chap-badge{display:inline-block;background:linear-gradient(135deg,var(--purple),var(--pink));color:#fff;padding:3px 11px;border-radius:9px;font-size:10.5px;font-weight:800;margin-bottom:9px;}
+.cont-row{display:flex;gap:6px;margin-top:9px;}
+.cont-row input{flex:1;}
+
+/* SLAAP */
+.sleep-clock{background:linear-gradient(135deg,#0f0020,#1a0533);border-radius:22px;padding:20px;text-align:center;margin-bottom:11px;}
+.sleep-time{font-family:'Fredoka One',sans-serif;font-size:44px;color:#fff;margin:8px 0;}
+.sleep-sub{font-size:10px;color:rgba(255,255,255,0.45);font-weight:700;}
+.qual-row{display:flex;justify-content:center;gap:10px;margin:10px 0;}
+.qual-btn{background:rgba(255,255,255,0.08);border:none;border-radius:11px;padding:9px 12px;cursor:pointer;font-size:18px;transition:all 0.2s;}
+.qual-btn.selected{background:rgba(168,85,247,0.4);box-shadow:0 0 0 2px var(--purple);}
+.dream-entry{background:#fff;border-radius:13px;border:1.5px solid var(--border);padding:11px;margin-bottom:6px;}
+.dream-entry h4{font-size:11.5px;font-weight:800;margin-bottom:2px;}
+.dream-entry p{font-size:10.5px;color:var(--soft);font-weight:600;line-height:1.4;}
+.sleep-stars{color:var(--yellow);}
+
+/* WERELD */
+.globe-display{background:linear-gradient(135deg,#001433,#003366);border-radius:18px;padding:18px;text-align:center;margin-bottom:11px;}
+.globe-emoji{font-size:50px;animation:rot 8s linear infinite;}
+@keyframes rot{to{transform:rotate(360deg);}}
+.globe-title{font-family:'Fredoka One',sans-serif;font-size:17px;color:#fff;margin-top:5px;}
+.globe-sub{font-size:11px;color:rgba(255,255,255,0.55);font-weight:700;}
+.dest-card{background:#fff;border-radius:14px;border:1.5px solid var(--border);padding:13px;margin-bottom:8px;display:flex;gap:9px;align-items:flex-start;}
+.dest-flag{font-size:26px;flex-shrink:0;}
+.dest-info h4{font-size:12px;font-weight:800;}
+.dest-info p{font-size:11px;color:var(--soft);font-weight:600;line-height:1.4;margin-top:2px;}
+.dest-tags{display:flex;gap:4px;flex-wrap:wrap;margin-top:4px;}
+.dest-tag{background:var(--bg);border-radius:7px;padding:2px 7px;font-size:9px;font-weight:800;color:var(--soft);}
+.vis-btn{margin-left:auto;background:none;border:1.5px solid var(--border);border-radius:8px;padding:4px 8px;cursor:pointer;font-size:9.5px;font-weight:800;color:var(--soft);flex-shrink:0;font-family:'Nunito',sans-serif;}
+.vis-btn.done{background:var(--green);color:#fff;border-color:var(--green);}
+
+/* ======= STATISTIEKEN ======= */
+.stats-hero{background:linear-gradient(135deg,#1a0533,#2d0a5e,#1a0533);border-radius:18px;padding:18px;margin-bottom:11px;text-align:center;}
+.stats-hero h2{font-family:'Fredoka One',sans-serif;font-size:20px;color:#fff;}
+.stats-hero p{font-size:11px;color:rgba(255,255,255,0.55);font-weight:700;margin-top:3px;}
+.stats-grid{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-bottom:11px;}
+.stat-card{background:#fff;border-radius:16px;padding:14px;border:1.5px solid var(--border);box-shadow:var(--shadow);text-align:center;}
+.stat-icon{font-size:28px;display:block;margin-bottom:5px;}
+.stat-num{font-family:'Fredoka One',sans-serif;font-size:26px;color:var(--purple);}
+.stat-label{font-size:10px;font-weight:800;color:var(--soft);margin-top:2px;}
+.stat-bar-row{display:flex;align-items:center;gap:8px;margin-bottom:7px;}
+.stat-bar-label{font-size:11px;font-weight:800;min-width:70px;}
+.stat-bar{flex:1;height:8px;background:var(--border);border-radius:4px;overflow:hidden;}
+.stat-bar-fill{height:100%;border-radius:4px;background:linear-gradient(90deg,var(--purple),var(--pink));}
+.stat-bar-val{font-size:10px;font-weight:800;color:var(--soft);min-width:20px;text-align:right;}
+.achievement{display:flex;align-items:center;gap:10px;background:#fff;border-radius:13px;border:1.5px solid var(--border);padding:11px;margin-bottom:7px;}
+.ach-icon{font-size:24px;width:40px;height:40px;background:var(--bg);border-radius:11px;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.ach-info h4{font-size:12px;font-weight:800;}
+.ach-info p{font-size:10.5px;color:var(--soft);font-weight:600;}
+.ach-badge{margin-left:auto;background:linear-gradient(135deg,var(--yellow),var(--orange));color:#fff;font-size:9px;font-weight:800;padding:3px 8px;border-radius:8px;flex-shrink:0;}
+
+/* ======= GEHEUGEN ======= */
+.mem-hero{background:linear-gradient(135deg,#0f0020,#1a0040);border-radius:18px;padding:18px;margin-bottom:11px;text-align:center;position:relative;overflow:hidden;}
+.mem-hero::before{content:'🧠';position:absolute;top:-10px;right:-10px;font-size:70px;opacity:0.07;}
+.mem-hero h2{font-family:'Fredoka One',sans-serif;font-size:18px;color:#fff;}
+.mem-hero p{font-size:11px;color:rgba(255,255,255,0.5);font-weight:700;margin-top:3px;}
+.mem-item{background:#fff;border-radius:14px;border:1.5px solid var(--border);padding:12px;margin-bottom:8px;display:flex;gap:10px;align-items:flex-start;}
+.mem-cat{width:36px;height:36px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0;}
+.mem-cat-name{background:#FEF3C7;}.mem-cat-likes{background:#D1FAE5;}.mem-cat-proj{background:#EDE9FE;}
+.mem-cat-dream{background:linear-gradient(135deg,#f5eeff,#fff0f7);}.mem-cat-school{background:#DBEAFE;}
+.mem-info{flex:1;}
+.mem-info label{font-size:10px;font-weight:800;color:var(--soft);text-transform:uppercase;display:block;margin-bottom:3px;}
+.mem-info input{padding:7px 10px;font-size:12px;}
+.mem-saved{display:inline-flex;align-items:center;gap:4px;background:var(--green);color:#fff;border-radius:8px;padding:3px 9px;font-size:10px;font-weight:800;margin-top:4px;}
+.knorri-knows{background:linear-gradient(135deg,#fff0f7,#f5eeff);border:1.5px solid var(--pink-l);border-radius:14px;padding:13px;margin-top:9px;}
+.knorri-knows h3{font-family:'Fredoka One',sans-serif;font-size:13px;color:var(--purple);margin-bottom:7px;}
+.know-tag{display:inline-flex;align-items:center;gap:5px;background:#fff;border:1.5px solid var(--border);border-radius:11px;padding:4px 10px;font-size:11px;font-weight:700;color:var(--text);margin:3px;}
+
+/* ======= BEAT LAB ======= */
+.beat-hero{background:linear-gradient(135deg,#0a0020,#200040,#0a001a);border-radius:18px;padding:18px;margin-bottom:11px;text-align:center;position:relative;overflow:hidden;}
+.beat-hero::before{content:'🎵';position:absolute;top:-5px;left:-5px;font-size:80px;opacity:0.06;}
+.beat-hero h2{font-family:'Fredoka One',sans-serif;font-size:20px;color:#fff;}
+.beat-hero p{font-size:11px;color:rgba(255,255,255,0.5);font-weight:700;margin-top:3px;}
+.vibe-grid{display:grid;grid-template-columns:1fr 1fr;gap:7px;margin-bottom:10px;}
+.vibe-opt{background:#fff;border:2px solid var(--border);border-radius:13px;padding:10px;cursor:pointer;text-align:center;transition:all 0.2s;}
+.vibe-opt.picked{border-color:var(--purple);background:linear-gradient(135deg,#0a0020,#200040);color:#fff;}
+.vibe-opt.picked .vl{color:rgba(255,255,255,0.7);}
+.ve{font-size:22px;display:block;}.vl{font-size:10px;font-weight:800;color:var(--soft);margin-top:2px;}
+.playlist-card{background:linear-gradient(135deg,#0a0020,#200040);border-radius:18px;padding:18px;margin-top:9px;}
+.pl-header{display:flex;gap:12px;align-items:center;margin-bottom:14px;}
+.pl-cover{width:56px;height:56px;border-radius:13px;background:linear-gradient(135deg,var(--pink),var(--purple));display:flex;align-items:center;justify-content:center;font-size:28px;flex-shrink:0;}
+.pl-name{font-family:'Fredoka One',sans-serif;font-size:17px;color:#fff;}
+.pl-meta{font-size:10px;color:rgba(255,255,255,0.5);font-weight:700;margin-top:2px;}
+.track-item{display:flex;align-items:center;gap:10px;padding:9px 0;border-bottom:1px solid rgba(255,255,255,0.07);}
+.track-item:last-child{border-bottom:none;}
+.track-num{font-size:11px;font-weight:800;color:rgba(255,255,255,0.3);width:16px;text-align:center;flex-shrink:0;}
+.track-info{flex:1;}
+.track-name{font-size:12px;font-weight:800;color:#fff;}
+.track-artist{font-size:10px;color:rgba(255,255,255,0.5);font-weight:700;}
+.track-dur{font-size:10px;color:rgba(255,255,255,0.4);font-weight:700;flex-shrink:0;}
+.bars{display:flex;align-items:flex-end;gap:2px;height:16px;flex-shrink:0;}
+.bar{width:3px;background:var(--pink);border-radius:1px;animation:bar-anim 0.8s infinite alternate;}
+.bar:nth-child(2){height:8px;animation-delay:0.1s;}.bar:nth-child(3){height:14px;animation-delay:0.2s;}
+.bar:nth-child(4){height:6px;animation-delay:0.3s;}.bar:nth-child(5){height:11px;animation-delay:0.4s;}
+@keyframes bar-anim{from{transform:scaleY(0.3);}to{transform:scaleY(1);}}
+.beat-vibe-desc{background:rgba(255,255,255,0.05);border-radius:11px;padding:10px;margin-top:12px;font-size:11px;color:rgba(255,255,255,0.6);font-weight:600;line-height:1.5;}
+
+/* SPEECH INDICATOR */
+.speech-wave{display:none;align-items:center;gap:3px;padding:6px 12px;background:rgba(255,100,100,0.15);border-radius:10px;margin-bottom:8px;}
+.speech-wave.show{display:flex;}
+.sw-bar{width:3px;background:var(--red);border-radius:2px;animation:sw 0.6s infinite alternate;}
+.sw-bar:nth-child(1){height:6px;}.sw-bar:nth-child(2){height:12px;animation-delay:0.1s;}
+.sw-bar:nth-child(3){height:18px;animation-delay:0.2s;}.sw-bar:nth-child(4){height:12px;animation-delay:0.3s;}
+.sw-bar:nth-child(5){height:6px;animation-delay:0.4s;}
+@keyframes sw{from{transform:scaleY(0.3);}to{transform:scaleY(1);}}
+.speech-wave span{font-size:11px;font-weight:800;color:var(--red);margin-left:6px;}
+
+/* API KEY SETUP */
+#api-setup{position:fixed;inset:0;background:linear-gradient(135deg,#1a0533,#2d0a5e,#FF6B9D22);z-index:9999;display:flex;align-items:center;justify-content:center;padding:20px;}
+.setup-card{background:#fff;border-radius:24px;padding:28px 22px;max-width:380px;width:100%;box-shadow:0 20px 60px rgba(168,85,247,0.3);}
+.setup-bear{font-size:56px;text-align:center;display:block;animation:wobble 3s infinite;margin-bottom:12px;}
+.setup-card h2{font-family:'Fredoka One',sans-serif;font-size:22px;color:var(--purple);text-align:center;margin-bottom:6px;}
+.setup-card p{font-size:12px;color:var(--soft);font-weight:700;text-align:center;line-height:1.6;margin-bottom:16px;}
+.setup-steps{background:var(--bg);border-radius:14px;padding:14px;margin-bottom:16px;}
+.setup-step{display:flex;gap:10px;align-items:flex-start;margin-bottom:10px;font-size:12px;font-weight:700;line-height:1.5;}
+.setup-step:last-child{margin-bottom:0;}
+.step-num{background:linear-gradient(135deg,var(--purple),var(--pink));color:#fff;width:22px;height:22px;border-radius:7px;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:900;flex-shrink:0;margin-top:1px;}
+.setup-link{color:var(--purple);font-weight:800;text-decoration:none;}
+.key-input-wrap{position:relative;margin-bottom:12px;}
+.key-input-wrap input{padding-right:40px;font-family:'Nunito',sans-serif;border:2px solid var(--border);border-radius:13px;padding:11px 40px 11px 13px;font-size:13px;font-weight:700;width:100%;outline:none;color:var(--text);}
+.key-input-wrap input:focus{border-color:var(--purple);}
+.key-toggle{position:absolute;right:12px;top:50%;transform:translateY(-50%);background:none;border:none;cursor:pointer;font-size:16px;}
+.setup-error{background:#FFE4E6;color:#E11D48;border-radius:10px;padding:9px 12px;font-size:12px;font-weight:800;margin-bottom:10px;display:none;}
+
+/* ============================================================
+   LOGIN & AUTH SYSTEM
+   ============================================================ */
+#auth-screen {
+  position: fixed; inset: 0; z-index: 9998;
+  background: linear-gradient(135deg, #1a0533 0%, #2d0a5e 50%, #FF6B9D22 100%);
+  display: flex; align-items: center; justify-content: center; padding: 20px;
+}
+.auth-card {
+  background: #fff; border-radius: 28px; padding: 28px 22px;
+  max-width: 380px; width: 100%;
+  box-shadow: 0 20px 60px rgba(168,85,247,0.35);
+  animation: authPop 0.4s cubic-bezier(0.34,1.56,0.64,1);
+}
+@keyframes authPop { from{opacity:0;transform:scale(0.85) translateY(20px);} to{opacity:1;transform:scale(1) translateY(0);} }
+.auth-bear { font-size: 52px; text-align: center; display: block; animation: wobble 3s infinite; margin-bottom: 10px; }
+.auth-card h2 { font-family: 'Fredoka One', cursive; font-size: 22px; color: var(--purple); text-align: center; margin-bottom: 4px; }
+.auth-card p { font-size: 11px; color: var(--soft); font-weight: 700; text-align: center; margin-bottom: 18px; }
+.auth-tabs { display: flex; gap: 0; margin-bottom: 18px; border: 2px solid var(--border); border-radius: 12px; overflow: hidden; }
+.auth-tab { flex: 1; padding: 8px; font-family: 'Nunito', sans-serif; font-size: 12px; font-weight: 800; border: none; cursor: pointer; background: #fff; color: var(--soft); transition: all 0.2s; }
+.auth-tab.active { background: linear-gradient(135deg, var(--purple), var(--pink)); color: #fff; }
+.auth-field { margin-bottom: 10px; }
+.auth-field label { font-size: 10px; font-weight: 800; color: var(--soft); display: block; margin-bottom: 3px; text-transform: uppercase; letter-spacing: 0.5px; }
+.auth-field input { width: 100%; border: 2px solid var(--border); border-radius: 12px; padding: 10px 13px; font-family: 'Nunito', sans-serif; font-size: 13px; font-weight: 700; outline: none; color: var(--text); }
+.auth-field input:focus { border-color: var(--purple); }
+.auth-error { background: #FFE4E6; color: #E11D48; border-radius: 10px; padding: 8px 12px; font-size: 11px; font-weight: 800; margin-bottom: 10px; display: none; }
+.auth-success { background: #D1FAE5; color: #059669; border-radius: 10px; padding: 8px 12px; font-size: 11px; font-weight: 800; margin-bottom: 10px; display: none; }
+
+/* CHAT HISTORY SIDEBAR */
+#chat-sidebar {
+  position: fixed; top: 0; left: -280px; width: 280px; height: 100dvh;
+  background: linear-gradient(180deg, #1a0533 0%, #0f0020 100%);
+  z-index: 300; transition: left 0.3s cubic-bezier(0.34,1.2,0.64,1);
+  display: flex; flex-direction: column; padding-bottom: env(safe-area-inset-bottom, 0);
+}
+#chat-sidebar.open { left: 0; }
+#sidebar-overlay {
+  position: fixed; inset: 0; background: rgba(0,0,0,0.5);
+  z-index: 299; display: none; backdrop-filter: blur(3px);
+}
+#sidebar-overlay.show { display: block; }
+.sidebar-header {
+  padding: 50px 16px 14px;
+  border-bottom: 1px solid rgba(255,255,255,0.08);
+}
+.sidebar-header h3 { font-family: 'Fredoka One', cursive; font-size: 16px; color: #fff; margin-bottom: 2px; }
+.sidebar-user { font-size: 11px; color: rgba(255,255,255,0.5); font-weight: 700; }
+.sidebar-new-chat {
+  margin: 12px; background: linear-gradient(135deg, var(--purple), var(--pink));
+  border: none; border-radius: 12px; padding: 10px; color: #fff;
+  font-family: 'Nunito', sans-serif; font-size: 12px; font-weight: 800;
+  cursor: pointer; width: calc(100% - 24px); text-align: left;
+  display: flex; align-items: center; gap: 8px;
+}
+.sidebar-new-chat:active { opacity: 0.8; }
+.sidebar-section-label {
+  font-size: 9px; font-weight: 800; color: rgba(255,255,255,0.3);
+  letter-spacing: 1.5px; text-transform: uppercase;
+  padding: 8px 16px 4px;
+}
+.chat-history-list { flex: 1; overflow-y: auto; padding: 0 10px 10px; }
+.chat-history-list::-webkit-scrollbar { width: 3px; }
+.chat-history-list::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius: 2px; }
+.chat-hist-item {
+  display: flex; align-items: center; gap: 8px;
+  padding: 10px 8px; border-radius: 11px; cursor: pointer;
+  transition: background 0.15s; margin-bottom: 3px;
+}
+.chat-hist-item:hover, .chat-hist-item.active { background: rgba(168,85,247,0.25); }
+.chat-hist-item .chi-icon { font-size: 16px; flex-shrink: 0; }
+.chat-hist-item .chi-info { flex: 1; min-width: 0; }
+.chat-hist-item .chi-title { font-size: 12px; font-weight: 800; color: #fff; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.chat-hist-item .chi-date { font-size: 10px; color: rgba(255,255,255,0.35); font-weight: 700; }
+.chat-hist-item .chi-del { font-size: 14px; opacity: 0; transition: opacity 0.15s; flex-shrink: 0; background: none; border: none; cursor: pointer; }
+.chat-hist-item:hover .chi-del { opacity: 0.5; }
+.sidebar-bottom {
+  border-top: 1px solid rgba(255,255,255,0.08);
+  padding: 12px 16px;
+}
+.sidebar-logout {
+  background: none; border: 1.5px solid rgba(255,255,255,0.15);
+  border-radius: 10px; padding: 8px 14px;
+  color: rgba(255,255,255,0.5); font-family: 'Nunito', sans-serif;
+  font-size: 11px; font-weight: 800; cursor: pointer; width: 100%;
+  transition: all 0.2s;
+}
+.sidebar-logout:active { background: rgba(255,0,0,0.2); color: #fff; }
+
+/* Hamburger menu knop */
+.menu-btn {
+  background: rgba(255,255,255,0.15); border: none; border-radius: 9px;
+  width: 32px; height: 32px; cursor: pointer; font-size: 16px;
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0;
+}
+
+
+/* ============================================================
+   SUBSCRIPTION SYSTEM
+   ============================================================ */
+#sub-modal {
+  position: fixed; inset: 0; z-index: 9999;
+  background: rgba(0,0,0,0.7); backdrop-filter: blur(8px);
+  display: none; align-items: center; justify-content: center; padding: 16px;
+}
+#sub-modal.show { display: flex; }
+.sub-card {
+  background: #fff; border-radius: 28px; padding: 24px 20px;
+  max-width: 420px; width: 100%; max-height: 90dvh; overflow-y: auto;
+  animation: authPop 0.35s cubic-bezier(0.34,1.56,0.64,1);
+}
+.sub-card::-webkit-scrollbar { display: none; }
+.sub-header { text-align: center; margin-bottom: 18px; }
+.sub-header h2 { font-family: 'Fredoka One', cursive; font-size: 22px; color: var(--purple); }
+.sub-header p { font-size: 11px; color: var(--soft); font-weight: 700; margin-top: 3px; }
+.sub-current {
+  background: linear-gradient(135deg, #f5eeff, #fff0f7);
+  border: 1.5px solid var(--pink-l); border-radius: 14px;
+  padding: 10px 14px; margin-bottom: 16px;
+  font-size: 12px; font-weight: 800; color: var(--purple);
+  display: flex; align-items: center; gap: 8px;
+}
+.plan-card {
+  border: 2px solid var(--border); border-radius: 18px;
+  padding: 16px; margin-bottom: 10px; position: relative;
+  transition: all 0.2s; cursor: pointer;
+}
+.plan-card:hover { border-color: var(--purple); box-shadow: 0 4px 20px rgba(168,85,247,0.15); }
+.plan-card.popular { border-color: var(--purple); }
+.plan-popular-badge {
+  position: absolute; top: -10px; left: 50%; transform: translateX(-50%);
+  background: linear-gradient(135deg, var(--purple), var(--pink));
+  color: #fff; font-size: 10px; font-weight: 800;
+  padding: 3px 14px; border-radius: 20px; white-space: nowrap;
+}
+.plan-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px; }
+.plan-name { font-family: 'Fredoka One', cursive; font-size: 18px; }
+.plan-price { text-align: right; }
+.plan-price .amount { font-family: 'Fredoka One', cursive; font-size: 22px; color: var(--purple); }
+.plan-price .period { font-size: 10px; color: var(--soft); font-weight: 700; }
+.plan-features { list-style: none; }
+.plan-features li { font-size: 11px; font-weight: 700; color: var(--text); padding: 2px 0; display: flex; align-items: center; gap: 6px; }
+.plan-features li::before { content: '✓'; color: var(--green); font-weight: 900; }
+.plan-features li.no::before { content: '✕'; color: var(--red); }
+.plan-features li.no { color: var(--soft); }
+.plan-btn {
+  width: 100%; margin-top: 12px; padding: 10px;
+  border-radius: 12px; border: none; cursor: pointer;
+  font-family: 'Nunito', sans-serif; font-size: 13px; font-weight: 800;
+  transition: all 0.2s;
+}
+.plan-btn-free { background: var(--bg); color: var(--soft); border: 1.5px solid var(--border); }
+.plan-btn-plus { background: linear-gradient(135deg, var(--purple), var(--pink)); color: #fff; box-shadow: 0 4px 14px rgba(168,85,247,0.3); }
+.plan-btn-pro { background: linear-gradient(135deg, #FFD700, #FFA500); color: #fff; box-shadow: 0 4px 14px rgba(255,165,0,0.3); }
+.plan-btn-ultra { background: linear-gradient(135deg, #1a0533, #A855F7); color: #fff; box-shadow: 0 4px 20px rgba(168,85,247,0.4); }
+.plan-btn:active { transform: scale(0.97); }
+
+/* LIMIT BANNER */
+#limit-banner {
+  background: linear-gradient(135deg, var(--yellow), var(--orange));
+  border-radius: 14px; padding: 12px 14px; margin-bottom: 10px;
+  display: none; align-items: center; gap: 10px;
+}
+#limit-banner.show { display: flex; }
+.limit-text { flex: 1; font-size: 12px; font-weight: 800; color: #fff; }
+.limit-upgrade-btn {
+  background: rgba(255,255,255,0.25); border: 1.5px solid rgba(255,255,255,0.4);
+  border-radius: 10px; padding: 6px 12px; color: #fff;
+  font-family: 'Nunito', sans-serif; font-size: 11px; font-weight: 800; cursor: pointer;
+  white-space: nowrap;
+}
+
+/* CROWN BADGE */
+.plan-badge {
+  display: inline-flex; align-items: center; gap: 4px;
+  padding: 2px 8px; border-radius: 8px; font-size: 10px; font-weight: 800;
+}
+.badge-free { background: var(--bg); color: var(--soft); }
+.badge-plus { background: linear-gradient(135deg,#f5eeff,#fff0f7); color: var(--purple); }
+.badge-pro { background: linear-gradient(135deg,#FFF3CD,#FFE0A0); color: #D97706; }
+.badge-ultra { background: linear-gradient(135deg,#1a0533,#2d0a5e); color: #D8B4FE; }
+
+/* STRIPE CHECKOUT STEPS */
+.checkout-steps { background: var(--bg); border-radius: 14px; padding: 14px; margin-top: 10px; }
+.checkout-step { display: flex; gap: 10px; margin-bottom: 10px; }
+.checkout-step:last-child { margin-bottom: 0; }
+.cs-num { width: 24px; height: 24px; background: linear-gradient(135deg, var(--purple), var(--pink)); color: #fff; border-radius: 7px; display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 900; flex-shrink: 0; }
+.cs-text { font-size: 11px; font-weight: 700; color: var(--text); line-height: 1.5; }
+.cs-text strong { color: var(--purple); }
+
+</style>
+</head>
+<body>
+<div id="app">
+  <header>
+    <span class="h-bear" onclick="openSidebar()">🧸</span>
+    <div class="h-info">
+      <h1>Knorri</h1>
+      <p id="h-sub">Jouw slimme buddy ✨</p>
+    </div>
+    <div class="h-right">
+      <button class="mic-btn" id="mic-btn" onclick="toggleMic()" title="Spreek met Knorri">🎙️</button>
+      <span class="h-dot"></span>
+    </div>
+  </header>
+
+  <div class="tab-bar" id="tab-bar">
+    <button class="tab-btn active" data-s="chat" onclick="showScreen('chat',this)"><span class="ti">💬</span><span class="tl">Knorri</span></button>
+    <button class="tab-btn" data-s="mood" onclick="showScreen('mood',this)"><span class="ti">😊</span><span class="tl">Gevoel</span></button>
+    <button class="tab-btn" data-s="planning" onclick="showScreen('planning',this)"><span class="ti">📅</span><span class="tl">Planning</span></button>
+    <button class="tab-btn" data-s="goals" onclick="showScreen('goals',this)"><span class="ti">⭐</span><span class="tl">Doelen</span></button>
+    <button class="tab-btn" data-s="kook" onclick="showScreen('kook',this)"><span class="ti">🍳</span><span class="tl">Kook Chef</span></button>
+    <button class="tab-btn" data-s="mode" onclick="showScreen('mode',this)"><span class="ti">👕</span><span class="tl">Mode Lab</span></button>
+    <button class="tab-btn" data-s="beat" onclick="showScreen('beat',this)"><span class="ti">🎵</span><span class="tl">Beat Lab</span></button>
+    <button class="tab-btn" data-s="toekomst" onclick="showScreen('toekomst',this)"><span class="ti">🔮</span><span class="tl">Toekomst</span></button>
+    <button class="tab-btn" data-s="gamedev" onclick="showScreen('gamedev',this)"><span class="ti">🎮</span><span class="tl">Game Dev</span></button>
+    <button class="tab-btn" data-s="cash" onclick="showScreen('cash',this)"><span class="ti">💰</span><span class="tl">Cash Boss</span></button>
+    <button class="tab-btn" data-s="trainer" onclick="showScreen('trainer',this)"><span class="ti">🥊</span><span class="tl">Trainer</span></button>
+    <button class="tab-btn" data-s="verhaal" onclick="showScreen('verhaal',this)"><span class="ti">📖</span><span class="tl">Verhaal</span></button>
+    <button class="tab-btn" data-s="slaap" onclick="showScreen('slaap',this)"><span class="ti">🌙</span><span class="tl">Slaap</span></button>
+    <button class="tab-btn" data-s="wereld" onclick="showScreen('wereld',this)"><span class="ti">🌍</span><span class="tl">Wereld</span></button>
+    <button class="tab-btn" data-s="stats" onclick="showScreen('stats',this)"><span class="ti">📊</span><span class="tl">Stats</span></button>
+    <button class="tab-btn" data-s="geheugen" onclick="showScreen('geheugen',this)"><span class="ti">🧠</span><span class="tl">Geheugen</span></button>
+  </div>
+
+  <main id="main">
+
+    <!-- ===== CHAT ===== -->
+    <div class="screen active" id="screen-chat">
+      <div class="welcome">
+        <span class="w-bear" onclick="shakeKnorri(this)">🧸</span>
+        <h2 id="welcome-name">Hey! Ik ben Knorri!</h2>
+        <p>Jouw persoonlijke buddy voor alles 💜</p>
+      </div>
+      <div class="speech-wave" id="speech-wave">
+        <div class="sw-bar"></div><div class="sw-bar"></div><div class="sw-bar"></div><div class="sw-bar"></div><div class="sw-bar"></div>
+        <span>Knorri luistert...</span>
+      </div>
+      <div class="quick-row">
+        <button class="q-btn" onclick="quickSend('Help me met mijn Minecraft server')">🎮 Minecraft</button>
+        <button class="q-btn" onclick="quickSend('Help me met Unreal Engine 5')">🎮 UE5</button>
+        <button class="q-btn" onclick="quickSend('Wat moet ik vandaag eten?')">🍎 Eten</button>
+        <button class="q-btn" onclick="quickSend('Ik verveel me, geef me ideeën')">💡 Ideeën</button>
+        <button class="q-btn" onclick="quickSend('Ik voel me niet goed')">💜 Praten</button>
+        <button class="q-btn" onclick="quickSend('Geef me schooltips')">📚 School</button>
+      </div>
+      <div class="card">
+        <div id="chat-messages">
+          <div class="msg msg-k"><div class="msg-s">🧸 Knorri</div><span id="welcome-msg">Heeey! 🎉 Ik ben Knorri, jouw slimme buddy! Ik help je met alles — Minecraft, UE5, je toekomst, kleding ontwerpen, verhalen schrijven en veel meer. Wat wil je doen vandaag? 💜</span></div>
+        </div>
+        <div class="chat-row">
+          <textarea id="chat-input" placeholder="Typ of spreek met Knorri..." rows="1" onkeydown="handleKey(event)" oninput="autoGrow(this)"></textarea>
+          <button class="send-btn" id="send-btn" onclick="sendMessage()">🚀</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ===== MOOD ===== -->
+    <div class="screen" id="screen-mood">
+      <div class="sec-title">😊 Hoe voel jij je nu?</div>
+      <div class="card">
+        <div class="mood-grid">
+          <button class="mood-btn" onclick="selectMood(this,'super blij 😄')"><span class="mood-emoji">😄</span><span class="mood-label">Super blij</span></button>
+          <button class="mood-btn" onclick="selectMood(this,'goed 🙂')"><span class="mood-emoji">🙂</span><span class="mood-label">Goed</span></button>
+          <button class="mood-btn" onclick="selectMood(this,'oké 😐')"><span class="mood-emoji">😐</span><span class="mood-label">Oké</span></button>
+          <button class="mood-btn" onclick="selectMood(this,'moe 😴')"><span class="mood-emoji">😴</span><span class="mood-label">Moe</span></button>
+          <button class="mood-btn" onclick="selectMood(this,'verdrietig 😢')"><span class="mood-emoji">😢</span><span class="mood-label">Verdrietig</span></button>
+          <button class="mood-btn" onclick="selectMood(this,'gestrest 😤')"><span class="mood-emoji">😤</span><span class="mood-label">Gestrest</span></button>
+          <button class="mood-btn" onclick="selectMood(this,'boos 😠')"><span class="mood-emoji">😠</span><span class="mood-label">Boos</span></button>
+          <button class="mood-btn" onclick="selectMood(this,'opgewonden 🤩')"><span class="mood-emoji">🤩</span><span class="mood-label">Opgewonden</span></button>
+          <button class="mood-btn" onclick="selectMood(this,'angstig 😰')"><span class="mood-emoji">😰</span><span class="mood-label">Angstig</span></button>
+        </div>
+      </div>
+      <div id="mood-response" style="display:none"></div>
+    </div>
+
+    <!-- ===== PLANNING ===== -->
+    <div class="screen" id="screen-planning">
+      <div class="sec-title">📅 Jouw Week</div>
+      <div id="school-alert" class="alert-pill" style="display:none">⏰ <span id="alert-txt"></span></div>
+      <div class="day-tabs" id="day-tabs">
+        <button class="day-tab" onclick="selectDay(0)">Ma</button>
+        <button class="day-tab" onclick="selectDay(1)">Di</button>
+        <button class="day-tab" onclick="selectDay(2)">Wo</button>
+        <button class="day-tab" onclick="selectDay(3)">Do</button>
+        <button class="day-tab" onclick="selectDay(4)">Vr</button>
+        <button class="day-tab" onclick="selectDay(5)">Za</button>
+        <button class="day-tab" onclick="selectDay(6)">Zo</button>
+      </div>
+      <div class="card">
+        <div id="task-list"></div>
+        <div class="add-row">
+          <input type="text" id="task-input" placeholder="Nieuwe taak..." onkeydown="if(event.key==='Enter')addTask()">
+          <button class="btn-p" onclick="addTask()" style="padding:9px 13px;border-radius:12px;font-size:11px;white-space:nowrap">+ Voeg toe</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ===== GOALS ===== -->
+    <div class="screen" id="screen-goals">
+      <div class="sec-title">⭐ Mijn Doelen</div>
+      <div class="card">
+        <div id="goals-list"></div>
+        <div class="add-row">
+          <input type="text" id="goal-input" placeholder="Nieuw doel..." onkeydown="if(event.key==='Enter')addGoal()">
+          <button class="btn-p" onclick="addGoal()" style="padding:9px 13px;border-radius:12px;font-size:11px;white-space:nowrap">+ Doel</button>
+        </div>
+      </div>
+      <div id="goal-ai-box" style="display:none" class="ai-box"></div>
+    </div>
+
+    <!-- ===== KOOK CHEF ===== -->
+    <div class="screen" id="screen-kook">
+      <div class="sec-title">🍳 Kook Chef</div>
+      <div class="card">
+        <div class="card-title">🥕 Wat heb je in huis?</div>
+        <p style="font-size:11px;color:var(--soft);font-weight:700;margin-bottom:9px">Knorri bedenkt een recept met jouw ingrediënten!</p>
+        <div class="ing-tags" id="ing-tags"></div>
+        <div class="add-row">
+          <input type="text" id="ing-input" placeholder="Ingrediënt..." onkeydown="if(event.key==='Enter')addIngredient()">
+          <button class="btn-p" onclick="addIngredient()" style="padding:9px 12px;border-radius:12px;font-size:11px;white-space:nowrap">+ Voeg toe</button>
+        </div>
+        <div style="display:flex;gap:5px;flex-wrap:wrap;margin-top:9px">
+          <button class="btn-o" onclick="qi('🥚 Eieren')">🥚 Eieren</button>
+          <button class="btn-o" onclick="qi('🧀 Kaas')">🧀 Kaas</button>
+          <button class="btn-o" onclick="qi('🍝 Pasta')">🍝 Pasta</button>
+          <button class="btn-o" onclick="qi('🍅 Tomaat')">🍅 Tomaat</button>
+          <button class="btn-o" onclick="qi('🐔 Kip')">🐔 Kip</button>
+          <button class="btn-o" onclick="qi('🥦 Broccoli')">🥦 Broccoli</button>
+          <button class="btn-o" onclick="qi('🍚 Rijst')">🍚 Rijst</button>
+        </div>
+        <button class="btn-p btn-full" style="margin-top:11px" onclick="generateRecipe()">🍽️ Knorri, maak een recept!</button>
+      </div>
+      <div id="recipe-result"></div>
+    </div>
+
+    <!-- ===== MODE LAB ===== -->
+    <div class="screen" id="screen-mode">
+      <div class="sec-title">👕 Mode Lab</div>
+      <div class="card">
+        <div class="card-title">✨ Ontwerp je outfit</div>
+        <div style="margin-bottom:8px">
+          <label style="font-size:10px;font-weight:800;color:var(--soft);display:block;margin-bottom:5px">STIJL</label>
+          <div class="style-grid" id="style-picker">
+            <div class="style-opt" onclick="pickStyle(this,'Streetwear')"><span class="se">🏙️</span><span class="sl">Streetwear</span></div>
+            <div class="style-opt" onclick="pickStyle(this,'Gothic')"><span class="se">🖤</span><span class="sl">Gothic</span></div>
+            <div class="style-opt" onclick="pickStyle(this,'Retro 80s')"><span class="se">📼</span><span class="sl">Retro 80s</span></div>
+            <div class="style-opt" onclick="pickStyle(this,'Futuristic')"><span class="se">🚀</span><span class="sl">Futuristic</span></div>
+          </div>
+        </div>
+        <div style="margin-bottom:8px">
+          <label style="font-size:10px;font-weight:800;color:var(--soft);display:block;margin-bottom:5px">KLEDINGSTUK</label>
+          <div class="style-grid" id="item-picker">
+            <div class="style-opt" onclick="pickItem(this,'Hoodie')"><span class="se">🧥</span><span class="sl">Hoodie</span></div>
+            <div class="style-opt" onclick="pickItem(this,'T-shirt')"><span class="se">👕</span><span class="sl">T-Shirt</span></div>
+            <div class="style-opt" onclick="pickItem(this,'Broek')"><span class="se">👖</span><span class="sl">Broek</span></div>
+            <div class="style-opt" onclick="pickItem(this,'Jas')"><span class="se">🧣</span><span class="sl">Jas</span></div>
+          </div>
+        </div>
+        <input type="text" id="mode-extra" placeholder="Extra idee (bijv. 'met vlammen')..." style="margin-bottom:10px">
+        <button class="btn-p btn-full" onclick="generateOutfit()">✨ Knorri, ontwerp het!</button>
+      </div>
+      <div id="outfit-result"></div>
+      <div id="collection-section" style="display:none">
+        <div class="sec-title" style="margin-top:13px">🛍️ Mijn Collectie</div>
+        <div class="coll-grid" id="coll-grid"></div>
+      </div>
+    </div>
+
+    <!-- ===== BEAT LAB ===== -->
+    <div class="screen" id="screen-beat">
+      <div class="beat-hero">
+        <h2>🎵 Beat Lab</h2>
+        <p>Knorri maakt jouw perfecte playlist</p>
+      </div>
+      <div class="card">
+        <div class="card-title">🎧 Kies je vibe</div>
+        <div class="vibe-grid" id="vibe-picker">
+          <div class="vibe-opt" onclick="pickVibe(this,'Deep Focus - coden en bouwen')"><span class="ve">💻</span><span class="vl">Deep Focus</span></div>
+          <div class="vibe-opt" onclick="pickVibe(this,'Energiek - sport en workout')"><span class="ve">⚡</span><span class="vl">Energiek</span></div>
+          <div class="vibe-opt" onclick="pickVibe(this,'Chill - ontspannen en relaxen')"><span class="ve">🌊</span><span class="vl">Chill Vibes</span></div>
+          <div class="vibe-opt" onclick="pickVibe(this,'Dark & Moody - creatief schrijven')"><span class="ve">🌑</span><span class="vl">Dark Moody</span></div>
+          <div class="vibe-opt" onclick="pickVibe(this,'Hype - feest en goed gevoel')"><span class="ve">🔥</span><span class="vl">Hype Mode</span></div>
+          <div class="vibe-opt" onclick="pickVibe(this,'Lo-fi - studeren')"><span class="ve">☕</span><span class="vl">Lo-Fi Study</span></div>
+        </div>
+        <div style="margin-top:10px">
+          <label style="font-size:10px;font-weight:800;color:var(--soft);display:block;margin-bottom:5px">OF BESCHRIJF ZELF</label>
+          <input type="text" id="beat-custom" placeholder="bijv. 'donker, mysterieus, horror game bouwen'...">
+        </div>
+        <button class="btn-p btn-full" style="margin-top:10px" onclick="generatePlaylist()">🎵 Maak mijn playlist!</button>
+      </div>
+      <div id="playlist-result"></div>
+    </div>
+
+    <!-- ===== TOEKOMST ===== -->
+    <div class="screen" id="screen-toekomst">
+      <div class="sec-title">🔮 Mijn Toekomst</div>
+      <div class="card">
+        <div class="card-title">✨ Vertel Knorri over jou</div>
+        <div style="display:flex;flex-direction:column;gap:7px">
+          <div><label style="font-size:10px;font-weight:800;color:var(--soft);display:block;margin-bottom:3px">GROOTSTE DROOM</label><input type="text" id="fut-dream" placeholder="bijv. Game developer, eigen merk..."></div>
+          <div><label style="font-size:10px;font-weight:800;color:var(--soft);display:block;margin-bottom:3px">WAAR BEN JE GOED IN?</label><input type="text" id="fut-good" placeholder="bijv. Programmeren, creatief..."></div>
+          <div><label style="font-size:10px;font-weight:800;color:var(--soft);display:block;margin-bottom:3px">LEEFTIJD</label><input type="number" id="fut-age" placeholder="bijv. 16" min="5" max="25"></div>
+          <div><label style="font-size:10px;font-weight:800;color:var(--soft);display:block;margin-bottom:3px">10 JAAR DOEL</label><input type="text" id="fut-goal" placeholder="bijv. Eigen gamestudio..."></div>
+        </div>
+        <button class="btn-p btn-full" style="margin-top:11px" onclick="generateFuture()">🔮 Voorspel mijn toekomst!</button>
+      </div>
+      <div id="future-result"></div>
+    </div>
+
+    <!-- ===== GAME DEV ===== -->
+    <div class="screen" id="screen-gamedev">
+      <div class="sec-title">🎮 Game Dev Studio</div>
+      <div id="projects-list"></div>
+      <div class="card">
+        <div class="card-title">➕ Nieuw Project</div>
+        <div style="display:flex;flex-direction:column;gap:7px">
+          <input type="text" id="proj-name" placeholder="Project naam...">
+          <select id="proj-type">
+            <option value="mc">🟢 Minecraft Server</option>
+            <option value="ue5">🟣 Unreal Engine 5</option>
+            <option value="web">🔵 Web App / PWA</option>
+            <option value="other">⚪ Anders</option>
+          </select>
+          <input type="text" id="proj-desc" placeholder="Beschrijving...">
+          <button class="btn-p btn-full" onclick="addProject()">+ Maak project aan</button>
+        </div>
+      </div>
+      <div id="gamedev-ai" style="display:none" class="ai-box"></div>
+    </div>
+
+    <!-- ===== CASH ===== -->
+    <div class="screen" id="screen-cash">
+      <div class="bal-display">
+        <div class="bal-label">Mijn Spaarpot 💰</div>
+        <div class="bal-amount">€<span id="bal-num">0,00</span></div>
+        <div class="bal-sub" id="bal-sub">Begin met bijhouden!</div>
+      </div>
+      <div class="card">
+        <div class="card-title">➕ Transactie</div>
+        <div style="display:flex;gap:6px;flex-wrap:wrap">
+          <input type="text" id="tx-desc" placeholder="Wat (bijv. Zakgeld)..." style="flex:1.5;min-width:120px">
+          <input type="number" id="tx-amount" placeholder="€" step="0.01" min="0" style="flex:0.8;min-width:70px">
+          <select id="tx-type" style="flex:1;min-width:100px"><option value="plus">+ Ontvangen</option><option value="minus">- Uitgegeven</option></select>
+        </div>
+        <button class="btn-p btn-full" style="margin-top:8px" onclick="addTransaction()">Voeg toe</button>
+      </div>
+      <div class="sec-title">📋 Geschiedenis</div>
+      <div id="tx-list"></div>
+      <div id="cash-tip" class="ai-box" style="display:none"></div>
+    </div>
+
+    <!-- ===== TRAINER ===== -->
+    <div class="screen" id="screen-trainer">
+      <div class="wo-header"><h2>🥊 Knorri Trainer</h2><p id="wo-greet">Jouw persoonlijke workout!</p></div>
+      <div class="card" style="margin-bottom:9px">
+        <div class="card-title">🎯 Kies je workout</div>
+        <div style="display:flex;gap:6px;flex-wrap:wrap">
+          <button class="btn-o" onclick="loadWorkout('kickboxen')">🥊 Kickboksen</button>
+          <button class="btn-o" onclick="loadWorkout('voetbal')">⚽ Voetbal</button>
+          <button class="btn-o" onclick="loadWorkout('kracht')">💪 Kracht</button>
+          <button class="btn-o" onclick="loadWorkout('cardio')">🏃 Cardio</button>
+          <button class="btn-o" onclick="loadWorkout('stretching')">🧘 Stretching</button>
+        </div>
+      </div>
+      <div class="timer-display">
+        <div class="timer-label" id="timer-label">Rust / Klaar</div>
+        <div class="timer-num" id="timer-num">00:00</div>
+        <div class="timer-btns">
+          <button class="btn-p" onclick="startTimer(60)">1 min</button>
+          <button class="btn-p" onclick="startTimer(180)">3 min</button>
+          <button class="btn-p" onclick="stopTimer()" style="background:linear-gradient(135deg,#E11D48,#fb7185)">Stop</button>
+        </div>
+      </div>
+      <div id="wo-exercises"></div>
+    </div>
+
+    <!-- ===== VERHAAL ===== -->
+    <div class="screen" id="screen-verhaal">
+      <div class="sec-title">📖 Verhaal Studio</div>
+      <div class="card">
+        <div class="card-title">✍️ Kies je genre</div>
+        <div class="story-opts" id="genre-picker">
+          <div class="story-opt" onclick="pickGenre(this,'Urban Fantasy')"><span class="se">🏙️</span><span class="sl">Urban Fantasy</span></div>
+          <div class="story-opt" onclick="pickGenre(this,'Horror')"><span class="se">👻</span><span class="sl">Horror</span></div>
+          <div class="story-opt" onclick="pickGenre(this,'Sci-Fi')"><span class="se">🚀</span><span class="sl">Sci-Fi</span></div>
+          <div class="story-opt" onclick="pickGenre(this,'Avontuur')"><span class="se">⚔️</span><span class="sl">Avontuur</span></div>
+        </div>
+        <input type="text" id="story-char" placeholder="Hoofdpersoon (naam, leeftijd, kracht...)" style="margin-bottom:7px">
+        <textarea id="story-setting" rows="2" placeholder="Setting (bijv. Amsterdam, geheime onderwereld...)"></textarea>
+        <button class="btn-p btn-full" style="margin-top:9px" onclick="generateStory()">📖 Schrijf hoofdstuk!</button>
+      </div>
+      <div id="story-result"></div>
+      <div id="cont-row" style="display:none" class="cont-row">
+        <input type="text" id="story-cont" placeholder="Wat gebeurt er daarna?">
+        <button class="btn-p" onclick="continueStory()" style="padding:9px 13px;white-space:nowrap">Volgende →</button>
+      </div>
+    </div>
+
+    <!-- ===== SLAAP ===== -->
+    <div class="screen" id="screen-slaap">
+      <div class="sleep-clock">
+        <div style="font-size:10px;color:rgba(255,255,255,0.4);font-weight:700;letter-spacing:2px">HUIDIGE TIJD</div>
+        <div class="sleep-time" id="sleep-clock-time">--:--</div>
+        <div class="sleep-sub" id="sleep-advice">Zodat Knorri je slaap kan bijhouden</div>
+      </div>
+      <div class="card">
+        <div class="card-title">🌙 Slaap Loggen</div>
+        <div style="display:flex;gap:7px;margin-bottom:9px">
+          <div style="flex:1"><label style="font-size:10px;font-weight:800;color:var(--soft);display:block;margin-bottom:3px">SLIEP OM</label><input type="time" id="sleep-from"></div>
+          <div style="flex:1"><label style="font-size:10px;font-weight:800;color:var(--soft);display:block;margin-bottom:3px">WAKKER OM</label><input type="time" id="sleep-to"></div>
+        </div>
+        <label style="font-size:10px;font-weight:800;color:var(--soft);display:block;margin-bottom:5px">KWALITEIT</label>
+        <div class="qual-row" id="qual-row">
+          <button class="qual-btn" onclick="pickQual(this,1)">😫</button>
+          <button class="qual-btn" onclick="pickQual(this,2)">😔</button>
+          <button class="qual-btn" onclick="pickQual(this,3)">😐</button>
+          <button class="qual-btn" onclick="pickQual(this,4)">😊</button>
+          <button class="qual-btn" onclick="pickQual(this,5)">😄</button>
+        </div>
+        <textarea id="dream-txt" rows="2" placeholder="Dromen opschrijven (optioneel)..." style="margin-bottom:9px;margin-top:9px"></textarea>
+        <button class="btn-p btn-full" onclick="saveSleep()">💾 Sla op</button>
+      </div>
+      <div id="sleep-ai" style="display:none" class="ai-box"></div>
+      <div class="sec-title" style="margin-top:11px">📊 Slaaphistorie</div>
+      <div id="sleep-hist"></div>
+    </div>
+
+    <!-- ===== WERELD ===== -->
+    <div class="screen" id="screen-wereld">
+      <div class="globe-display">
+        <div class="globe-emoji">🌍</div>
+        <div class="globe-title">Wereld Bucket List</div>
+        <div class="globe-sub" id="visited-count">0 plekken bezocht</div>
+      </div>
+      <div class="card">
+        <div class="add-row" style="margin-bottom:8px">
+          <input type="text" id="dest-input" placeholder="Land of stad..." onkeydown="if(event.key==='Enter')addDest()">
+          <button class="btn-p" onclick="addDest()" style="padding:9px 12px;border-radius:12px;font-size:11px;white-space:nowrap">+ Voeg toe</button>
+        </div>
+        <div style="display:flex;gap:5px;flex-wrap:wrap">
+          <button class="btn-o" onclick="addDestP('🇯🇵 Japan')">🇯🇵 Japan</button>
+          <button class="btn-o" onclick="addDestP('🇺🇸 New York')">🇺🇸 New York</button>
+          <button class="btn-o" onclick="addDestP('🇧🇷 Brazilië')">🇧🇷 Brazilië</button>
+          <button class="btn-o" onclick="addDestP('🇦🇺 Australië')">🇦🇺 Australië</button>
+        </div>
+      </div>
+      <div id="dest-list"></div>
+    </div>
+
+    <!-- ===== STATISTIEKEN ===== -->
+    <div class="screen" id="screen-stats">
+      <div class="stats-hero">
+        <h2>📊 Mijn Statistieken</h2>
+        <p id="stats-period">Alles wat Knorri bijhoudt</p>
+      </div>
+      <div class="stats-grid" id="stats-grid"></div>
+      <div class="card">
+        <div class="card-title">😊 Meest voorkomende gevoelens</div>
+        <div id="mood-bars"></div>
+      </div>
+      <div class="sec-title">🏆 Prestaties</div>
+      <div id="achievements"></div>
+      <div id="stats-ai" class="ai-box" style="display:none"></div>
+    </div>
+
+    <!-- ===== GEHEUGEN ===== -->
+    <div class="screen" id="screen-geheugen">
+      <div class="mem-hero">
+        <h2>🧠 Knorri's Geheugen</h2>
+        <p>Alles wat Knorri over jou weet</p>
+      </div>
+      <div class="card">
+        <div class="card-title">👤 Wie ben jij?</div>
+        <div class="mem-item"><div class="mem-cat mem-cat-name">👤</div><div class="mem-info"><label>Jouw naam</label><input type="text" id="mem-name" placeholder="Jouw naam..." oninput="saveMem()"></div></div>
+        <div class="mem-item"><div class="mem-cat mem-cat-likes">⚽</div><div class="mem-info"><label>Hobby's & interesses</label><input type="text" id="mem-hobbies" placeholder="bijv. Voetbal, kickboksen, gaming..." oninput="saveMem()"></div></div>
+        <div class="mem-item"><div class="mem-cat mem-cat-proj">🎮</div><div class="mem-info"><label>Huidige projecten</label><input type="text" id="mem-projects" placeholder="bijv. DEAD SIGNAL merk, Minecraft server..." oninput="saveMem()"></div></div>
+        <div class="mem-item"><div class="mem-cat mem-cat-dream">🔮</div><div class="mem-info"><label>Grote droom</label><input type="text" id="mem-dream" placeholder="bijv. Game developer, eigen merk..." oninput="saveMem()"></div></div>
+        <div class="mem-item"><div class="mem-cat mem-cat-school">📚</div><div class="mem-info"><label>School / jaar</label><input type="text" id="mem-school" placeholder="bijv. Klas 3, VMBO..." oninput="saveMem()"></div></div>
+        <div class="mem-item"><div class="mem-cat mem-cat-likes">📍</div><div class="mem-info"><label>Woonplaats</label><input type="text" id="mem-city" placeholder="bijv. Heerhugowaard..." oninput="saveMem()"></div></div>
+        <div id="mem-saved-indicator" style="display:none" class="mem-saved">✓ Opgeslagen in Knorri's geheugen</div>
+      </div>
+      <div class="knorri-knows">
+        <h3>🧸 Knorri weet dit over jou:</h3>
+        <div id="know-tags"></div>
+      </div>
+      <button class="btn-p btn-full" style="margin-top:10px" onclick="testMemory()">💬 Test Knorri's geheugen</button>
+    </div>
+
+  </main>
+</div>
+
+<script>
+// ============================================================
+// STATE & STORAGE
+// ============================================================
+const ls = {
+  get:(k,d)=>{try{return JSON.parse(localStorage.getItem(k))??d;}catch{return d;}},
+  set:(k,v)=>localStorage.setItem(k,JSON.stringify(v))
+};
+
+let chatHistory = [];
+const DAYS = ['Maandag','Dinsdag','Woensdag','Donderdag','Vrijdag','Zaterdag','Zondag'];
+let curDay = (()=>{let d=new Date().getDay();return d===0?6:d-1;})();
+let tasks = ls.get('k-tasks',{});
+let goals = ls.get('k-goals',[]);
+let projects = ls.get('k-projects',[]);
+let txs = ls.get('k-tx',[]);
+let collection = ls.get('k-coll',[]);
+let sleepLogs = ls.get('k-sleep',[]);
+let destinations = ls.get('k-dest',[]);
+let moodLog = ls.get('k-moods',[]);
+let usage = ls.get('k-usage',{chats:0,moods:0,recipes:0,outfits:0,goals:0,sleeps:0});
+let memory = ls.get('k-memory',{name:'',hobbies:'',projects:'',dream:'',school:'',city:''});
+let selectedStyle='',selectedItem='',selectedGenre='',selectedVibe='',sleepQual=0;
+let storyCtx=[];
+let timerInt=null,timerLeft=0;
+let currentOutfit=null;
+let recognition=null,isListening=false;
+
+// ============================================================
+// SYSTEM PROMPT WITH MEMORY
+// ============================================================
+function buildSystem() {
+  const m = memory;
+  let memStr = '';
+  if(m.name) memStr += `Naam: ${m.name}. `;
+  if(m.hobbies) memStr += `Hobby's: ${m.hobbies}. `;
+  if(m.projects) memStr += `Projecten: ${m.projects}. `;
+  if(m.dream) memStr += `Droom: ${m.dream}. `;
+  if(m.school) memStr += `School: ${m.school}. `;
+  if(m.city) memStr += `Woont in: ${m.city}. `;
+
+  return `Je bent Knorri, een warme schattige enthousiaste buddy-AI. Je spreekt ALTIJD in het Nederlands. Je bent speels, warm, grappig en slim. Gebruik emoji's. Houd antwoorden beknopt maar nuttig (max 4 zinnen tenzij uitleg nodig).
+
+${memStr ? `WAT JE WEET OVER DEZE PERSOON: ${memStr}Gebruik deze info om persoonlijk te reageren! Noem de persoon soms bij naam als je hem/haar kent.` : ''}
+
+Je helpt met: Minecraft server development, Unreal Engine 5, web apps, kleding ontwerpen, toekomstplanning, verhalen schrijven, koken, sport, welzijn en school.`;
+}
+
+
+
+// ============================================================
+// NAVIGATION
+// ============================================================
+const subs = {chat:'Chatten ✨',mood:'Hoe voel jij je? 💜',planning:'Jouw Week 📅',goals:'Jouw Doelen ⭐',kook:'Kook Chef 🍳',mode:'Mode Lab 👕',beat:'Beat Lab 🎵',toekomst:'Toekomst 🔮',gamedev:'Game Dev Studio 🎮',cash:'Cash Boss 💰',trainer:'Knorri Trainer 🥊',verhaal:'Verhaal Studio 📖',slaap:'Slaap Tracker 🌙',wereld:'Wereld 🌍',stats:'Statistieken 📊',geheugen:'Knorri\'s Geheugen 🧠'};
+
+function showScreen(name, btn) {
+  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
+  document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
+  document.getElementById('screen-'+name).classList.add('active');
+  (btn||document.querySelector(`[data-s="${name}"]`))?.classList.add('active');
+  document.getElementById('h-sub').textContent = subs[name]||'Jouw slimme buddy ✨';
+  if(name==='planning') initPlanning();
+  if(name==='goals') renderGoals();
+  if(name==='cash') renderCash();
+  if(name==='slaap') initSlaap();
+  if(name==='wereld') renderDest();
+  if(name==='gamedev') renderProjects();
+  if(name==='mode') renderCollection();
+  if(name==='stats') renderStats();
+  if(name==='geheugen') initMemory();
+}
+function goChat(){showScreen('chat');}
+
+// ============================================================
+// SPEECH RECOGNITION
+// ============================================================
+function initSpeech() {
+  const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+  if(!SR) return;
+  recognition = new SR();
+  recognition.lang = 'nl-NL';
+  recognition.continuous = false;
+  recognition.interimResults = false;
+  recognition.onresult = (e) => {
+    const txt = e.results[0][0].transcript;
+    document.getElementById('chat-input').value = txt;
+    stopListening();
+    sendMessage();
+  };
+  recognition.onerror = () => stopListening();
+  recognition.onend = () => stopListening();
+}
+function toggleMic() {
+  if(!recognition){alert('Spraakherkenning niet beschikbaar op dit apparaat. Je kunt gewoon typen!');return;}
+  if(isListening) stopListening(); else startListening();
+}
+function startListening() {
+  showScreen('chat');
+  isListening = true;
+  document.getElementById('mic-btn').classList.add('listening');
+  document.getElementById('mic-btn').textContent = '🔴';
+  document.getElementById('speech-wave').classList.add('show');
+  recognition.start();
+}
+function stopListening() {
+  isListening = false;
+  document.getElementById('mic-btn').classList.remove('listening');
+  document.getElementById('mic-btn').textContent = '🎙️';
+  document.getElementById('speech-wave').classList.remove('show');
+  try{recognition.stop();}catch{}
+}
+
+// ============================================================
+// CHAT
+// ============================================================
+function showTyping(){
+  const m=document.getElementById('chat-messages');
+  const t=document.createElement('div');t.className='msg msg-k';t.id='typing';
+  t.innerHTML='<div class="msg-s">🧸 Knorri</div><div class="typing-row"><span class="t-dot"></span><span class="t-dot"></span><span class="t-dot"></span></div>';
+  m.appendChild(t);m.scrollTop=m.scrollHeight;
+}
+function addMsg(role,text){
+  const m=document.getElementById('chat-messages');
+  document.getElementById('typing')?.remove();
+  const d=document.createElement('div');
+  d.className=role==='user'?'msg msg-u':'msg msg-k';
+  d.innerHTML=`<div class="msg-s">${role==='user'?(memory.name||'👤 Jij'):'🧸 Knorri'}</div>${text}`;
+  m.appendChild(d);m.scrollTop=m.scrollHeight;
+}
+async function sendMessage(){
+  const inp=document.getElementById('chat-input');
+  const txt=inp.value.trim();if(!txt)return;
+  inp.value='';inp.style.height='auto';
+  document.getElementById('send-btn').disabled=true;
+  addMsg('user',txt);
+  chatHistory.push({role:'user',content:txt});
+  saveChatMessage('user',txt);
+  showTyping();
+  usage.chats++;ls.set('k-usage',usage);
+  try{
+    const r=await ai(chatHistory);
+    addMsg('assistant',r);
+    chatHistory.push({role:'assistant',content:r});
+    saveChatMessage('assistant',r);
+    if(chatHistory.length>24)chatHistory=chatHistory.slice(-24);
+  }catch{
+    document.getElementById('typing')?.remove();
+    addMsg('assistant','😬 Geen verbinding. Check je internet!');
+  }
+  document.getElementById('send-btn').disabled=false;
+}
+function quickSend(txt){document.getElementById('chat-input').value=txt;showScreen('chat');sendMessage();}
+function handleKey(e){if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();sendMessage();}}
+function autoGrow(el){el.style.height='auto';el.style.height=Math.min(el.scrollHeight,85)+'px';}
+function shakeKnorri(el){el.style.animation='none';setTimeout(()=>el.style.animation='wobble 3s infinite',10);quickSend('Hoi Knorri! 👋');}
+
+// ============================================================
+// MOOD
+// ============================================================
+async function selectMood(btn,mood){
+  document.querySelectorAll('.mood-btn').forEach(b=>b.classList.remove('selected'));
+  btn.classList.add('selected');
+  moodLog.push({mood,date:new Date().toLocaleDateString('nl-NL'),ts:Date.now()});
+  ls.set('k-moods',moodLog);
+  usage.moods++;ls.set('k-usage',usage);
+  const r=document.getElementById('mood-response');
+  r.style.display='block';r.innerHTML='<div class="ai-box"><span class="loading-ring"></span> Knorri denkt...</div>';
+  try{
+    const name = memory.name ? memory.name : '';
+    const reply=await ai([{role:'user',content:`Ik voel me nu: ${mood}${name?` (Mijn naam is ${name})`:''}. Geef een warme persoonlijke reactie en één praktisch advies. Max 3 zinnen.`}]);
+    r.innerHTML=`<div class="ai-box">🧸 ${reply}</div>`;
+  }catch{r.innerHTML='<div class="ai-box">🧸 Knorri knuffelt je virtueel! 💜</div>';}
+}
+
+// ============================================================
+// PLANNING
+// ============================================================
+function saveTasks(){ls.set('k-tasks',tasks);}
+function renderTasks(){
+  const k=DAYS[curDay];const list=tasks[k]||[];
+  const el=document.getElementById('task-list');
+  if(!list.length){el.innerHTML=`<div class="loading-txt">Geen taken voor ${k} 🌟</div>`;return;}
+  el.innerHTML=list.map((t,i)=>`<div class="task-item ${t.done?'done':''}"><div class="task-chk" onclick="toggleTask(${i})">${t.done?'✓':''}</div><span class="task-text">${t.text}</span><span class="tag tag-${t.cat}">${t.cat}</span></div>`).join('');
+}
+function toggleTask(i){const k=DAYS[curDay];if(tasks[k])tasks[k][i].done=!tasks[k][i].done;saveTasks();renderTasks();}
+function addTask(){
+  const inp=document.getElementById('task-input');const txt=inp.value.trim();if(!txt)return;
+  const k=DAYS[curDay];if(!tasks[k])tasks[k]=[];
+  const cats=['sport','hobby','eten','school'];
+  const cat=cats.find(c=>txt.toLowerCase().includes(c))||'school';
+  tasks[k].push({text:txt,done:false,cat});saveTasks();renderTasks();inp.value='';
+}
+function selectDay(i){curDay=i;document.querySelectorAll('.day-tab').forEach((t,idx)=>t.classList.toggle('active',idx===i));renderTasks();}
+function initPlanning(){document.querySelectorAll('.day-tab').forEach((t,i)=>t.classList.toggle('active',i===curDay));renderTasks();checkAlert();}
+function checkAlert(){
+  const h=new Date().getHours(),m=new Date().getMinutes();
+  const a=document.getElementById('school-alert'),t=document.getElementById('alert-txt');
+  if(h===7&&m<45){t.textContent='School begint straks! Heb je alles bij je?';a.style.display='flex';}
+  else if(h===12&&m<30){t.textContent='Lunchpauze! Eet iets gezonds 🍽️';a.style.display='flex';}
+  else if(h===15&&m<30){t.textContent='School bijna klaar! Maak je taken af 📚';a.style.display='flex';}
+  else a.style.display='none';
+}
+
+// ============================================================
+// GOALS
+// ============================================================
+function saveGoals(){ls.set('k-goals',goals);}
+function renderGoals(){
+  const el=document.getElementById('goals-list');
+  if(!goals.length){el.innerHTML='<div class="loading-txt">Voeg je eerste doel toe! 🌟</div>';return;}
+  el.innerHTML=goals.map((g,i)=>`<div class="goal-item"><div class="goal-head"><span class="goal-name">${g.emoji||'🎯'} ${g.text}</span><div class="g-btns"><button class="g-step" onclick="updGoal(${i},-10)">−</button><button class="g-step" onclick="updGoal(${i},10)">+</button><button style="background:none;border:none;cursor:pointer;font-size:13px;opacity:0.4" onclick="delGoal(${i})">🗑️</button></div></div><div class="g-bar"><div class="g-fill" style="width:${g.progress}%"></div></div><div class="g-pct">${g.progress}% voltooid</div></div>`).join('');
+}
+function updGoal(i,d){goals[i].progress=Math.min(100,Math.max(0,(goals[i].progress||0)+d));saveGoals();renderGoals();if(goals[i].progress===100){setTimeout(()=>quickSend(`Knorri! Ik heb mijn doel "${goals[i].text}" behaald! 🎉`),400);showScreen('chat');}}
+function delGoal(i){goals.splice(i,1);saveGoals();renderGoals();}
+async function addGoal(){
+  const inp=document.getElementById('goal-input');const txt=inp.value.trim();if(!txt)return;
+  const em={minecraft:'🎮',game:'🎮',unreal:'🎮',school:'📚',sport:'⚽',code:'💻',schrijf:'📖',muziek:'🎵',spaar:'💰',voetbal:'⚽',kickbok:'🥊'};
+  const emoji=Object.entries(em).find(([k])=>txt.toLowerCase().includes(k))?.[1]||'🎯';
+  goals.push({text:txt,progress:0,emoji});saveGoals();renderGoals();inp.value='';
+  usage.goals++;ls.set('k-usage',usage);
+  const box=document.getElementById('goal-ai-box');box.style.display='block';
+  box.innerHTML='<span class="loading-ring"></span> Knorri maakt stappenplan...';
+  try{const r=await ai([{role:'user',content:`Maak een motiverend stappenplan (4 stappen) voor: "${txt}". Gebruik emoji's. Max 5 zinnen.`}]);box.innerHTML='🧸 '+r;}
+  catch{box.innerHTML='🧸 Geweldig doel! Zet kleine stappen, jij kan dit!';}
+}
+
+// ============================================================
+// KOOK CHEF
+// ============================================================
+let ingredients=[];
+function renderIngs(){document.getElementById('ing-tags').innerHTML=ingredients.map((v,i)=>`<div class="ing-tag">${v}<span onclick="removeIng(${i})" style="cursor:pointer;margin-left:2px">✕</span></div>`).join('');}
+function addIngredient(){const inp=document.getElementById('ing-input');const v=inp.value.trim();if(v&&!ingredients.includes(v)){ingredients.push(v);renderIngs();}inp.value='';}
+function qi(v){if(!ingredients.includes(v)){ingredients.push(v);renderIngs();}}
+function removeIng(i){ingredients.splice(i,1);renderIngs();}
+async function generateRecipe(){
+  if(!ingredients.length){document.getElementById('recipe-result').innerHTML='<div class="ai-box">🧸 Voeg eerst ingrediënten toe!</div>';return;}
+  const r=document.getElementById('recipe-result');
+  r.innerHTML='<div class="loading-txt"><span class="loading-ring"></span><br><br>Knorri bedenkt een recept...</div>';
+  usage.recipes++;ls.set('k-usage',usage);
+  try{
+    const reply=await ai([{role:'user',content:`Ingrediënten: ${ingredients.join(', ')}. Geef recept in JSON: {"naam":"...","emoji":"...","tijd":"...","moeilijk":"Makkelijk/Gemiddeld","stappen":["...","...",...]}. Alleen JSON.`}]);
+    const rec=JSON.parse(reply.replace(/```json|```/g,'').trim());
+    r.innerHTML=`<div class="recipe-card"><h3>${rec.emoji||'🍽️'} ${rec.naam}</h3><div class="recipe-meta"><div class="r-mi"><span>⏱️</span><span>${rec.tijd}</span></div><div class="r-mi"><span>👨‍🍳</span><span>${rec.moeilijk}</span></div></div><div class="recipe-steps">${(rec.stappen||[]).map(s=>`<div class="recipe-step">${s}</div>`).join('')}</div></div>`;
+  }catch{r.innerHTML='<div class="ai-box">🧸 Hmm, probeer andere ingrediënten!</div>';}
+}
+
+// ============================================================
+// MODE LAB
+// ============================================================
+function pickStyle(el,v){document.querySelectorAll('#style-picker .style-opt').forEach(e=>e.classList.remove('picked'));el.classList.add('picked');selectedStyle=v;}
+function pickItem(el,v){document.querySelectorAll('#item-picker .style-opt').forEach(e=>e.classList.remove('picked'));el.classList.add('picked');selectedItem=v;}
+async function generateOutfit(){
+  if(!selectedStyle||!selectedItem){document.getElementById('outfit-result').innerHTML='<div class="ai-box">🧸 Kies eerst stijl én kledingstuk!</div>';return;}
+  const extra=document.getElementById('mode-extra').value;
+  const r=document.getElementById('outfit-result');
+  r.innerHTML='<div class="loading-txt"><span class="loading-ring"></span><br><br>Knorri ontwerpt...</div>';
+  usage.outfits++;ls.set('k-usage',usage);
+  try{
+    const reply=await ai([{role:'user',content:`Ontwerp uniek kledingstuk: ${selectedItem} in ${selectedStyle} stijl${extra?`, extra: ${extra}`:''}. JSON: {"naam":"...","emoji":"...","beschrijving":"...","prijs":"€XX","tagline":"..."}. Alleen JSON.`}]);
+    currentOutfit=JSON.parse(reply.replace(/```json|```/g,'').trim());
+    r.innerHTML=`<div class="outfit-display"><div class="outfit-name">${currentOutfit.emoji||'👕'} ${currentOutfit.naam}</div><div class="outfit-desc">${currentOutfit.beschrijving}</div><div class="price-badge">${currentOutfit.prijs}</div><br><em style="font-size:10px;color:rgba(255,255,255,0.45)">"${currentOutfit.tagline}"</em><button class="sell-btn" onclick="addToCollection()">+ Voeg toe aan mijn collectie</button></div>`;
+  }catch{r.innerHTML='<div class="ai-box">🧸 Probeer opnieuw!</div>';}
+}
+function addToCollection(){if(!currentOutfit)return;collection.push({...currentOutfit,id:Date.now(),sold:false});ls.set('k-coll',collection);renderCollection();document.getElementById('outfit-result').innerHTML='<div class="ai-box">✅ Toegevoegd aan je collectie!</div>';}
+function renderCollection(){
+  const s=document.getElementById('collection-section'),g=document.getElementById('coll-grid');
+  if(!collection.length){s.style.display='none';return;}
+  s.style.display='block';
+  g.innerHTML=collection.map((c,i)=>`<div class="coll-item">${c.sold?'<span class="c-sold">Verkocht</span>':''}<div style="font-size:26px;margin-bottom:3px">${c.emoji||'👕'}</div><div class="c-name">${c.naam}</div><div class="c-price">${c.prijs}</div><button onclick="toggleSold(${i})" style="background:none;border:1px solid rgba(255,255,255,0.2);border-radius:7px;color:rgba(255,255,255,0.5);font-size:9px;font-weight:800;padding:3px 7px;cursor:pointer;margin-top:4px;font-family:'Nunito',sans-serif">${c.sold?'Terug':'Verkoop'}</button></div>`).join('');
+}
+function toggleSold(i){collection[i].sold=!collection[i].sold;ls.set('k-coll',collection);renderCollection();}
+
+// ============================================================
+// BEAT LAB
+// ============================================================
+function pickVibe(el,v){document.querySelectorAll('.vibe-opt').forEach(e=>e.classList.remove('picked'));el.classList.add('picked');selectedVibe=v;}
+async function generatePlaylist(){
+  const custom=document.getElementById('beat-custom').value.trim();
+  const vibe=custom||selectedVibe;
+  if(!vibe){document.getElementById('playlist-result').innerHTML='<div class="ai-box">🧸 Kies een vibe of beschrijf het zelf!</div>';return;}
+  const r=document.getElementById('playlist-result');
+  r.innerHTML='<div class="loading-txt"><span class="loading-ring"></span><br><br>Knorri mixt jouw playlist...</div>';
+  try{
+    const reply=await ai([{role:'user',content:`Maak een playlist voor deze vibe: "${vibe}". JSON: {"naam":"...","emoji":"...","beschrijving":"... (mood, wanneer te gebruiken)","tracks":[{"naam":"...","artiest":"...","duur":"X:XX"},...],"tip":"..."}. Maak 8 tracks. Bedenk zelf track namen in de stijl van de vibe. Alleen JSON.`}]);
+    const pl=JSON.parse(reply.replace(/```json|```/g,'').trim());
+    r.innerHTML=`<div class="playlist-card"><div class="pl-header"><div class="pl-cover">${pl.emoji||'🎵'}</div><div><div class="pl-name">${pl.naam}</div><div class="pl-meta">${pl.tracks?.length||8} tracks · Knorri's keuze</div></div></div>${(pl.tracks||[]).map((t,i)=>`<div class="track-item"><div class="track-num">${i+1}</div><div class="track-info"><div class="track-name">${t.naam}</div><div class="track-artist">${t.artiest}</div></div>${i===0?'<div class="bars"><div class="bar" style="height:4px"></div><div class="bar"></div><div class="bar"></div><div class="bar"></div><div class="bar"></div></div>':''}<div class="track-dur">${t.duur}</div></div>`).join('')}<div class="beat-vibe-desc">${pl.beschrijving}<br><br>💡 ${pl.tip}</div></div>`;
+  }catch{r.innerHTML='<div class="ai-box">🧸 Probeer opnieuw!</div>';}
+}
+
+// ============================================================
+// TOEKOMST
+// ============================================================
+async function generateFuture(){
+  const dream=document.getElementById('fut-dream').value.trim();
+  const good=document.getElementById('fut-good').value.trim();
+  const age=document.getElementById('fut-age').value.trim();
+  const goal=document.getElementById('fut-goal').value.trim();
+  const r=document.getElementById('future-result');
+  if(!dream){r.innerHTML='<div class="ai-box">🧸 Vertel me je droom!</div>';return;}
+  r.innerHTML='<div class="loading-txt"><span class="loading-ring"></span><br><br>Knorri kijkt in de kristallen bol...</div>';
+  try{
+    const reply=await ai([{role:'user',content:`Toekomstplan voor ${age||16} jaar, naam: ${memory.name||'onbekend'}. Droom: ${dream}. Goed in: ${good||'niet opgegeven'}. 10-jaar doel: ${goal||dream}. JSON: {"titel":"...","jaren":[{"jaar":"over 2 jaar","stap":"..."},{"jaar":"over 5 jaar","stap":"..."},{"jaar":"over 10 jaar","stap":"..."},{"jaar":"over 20 jaar","stap":"..."}],"geheimtip":"..."}. Alleen JSON.`}]);
+    const f=JSON.parse(reply.replace(/```json|```/g,'').trim());
+    r.innerHTML=`<div class="dream-card"><div class="dream-year">Knorri's Toekomstvisie 🔮</div><div class="dream-title">✨ ${f.titel}</div><div class="dream-steps">${f.jaren.map(j=>`<div class="d-step"><div class="d-dot"></div><div class="d-txt"><strong style="color:var(--pink-l)">${j.jaar}:</strong> ${j.stap}</div></div>`).join('')}</div><div style="margin-top:12px;background:rgba(255,255,255,0.05);border-radius:10px;padding:10px;font-size:11px;color:rgba(255,255,255,0.6);font-weight:600">💜 ${f.geheimtip}</div></div>`;
+  }catch{r.innerHTML='<div class="ai-box">🧸 Probeer opnieuw!</div>';}
+}
+
+// ============================================================
+// GAME DEV
+// ============================================================
+function saveProjects(){ls.set('k-projects',projects);}
+function renderProjects(){
+  const el=document.getElementById('projects-list');
+  if(!projects.length){el.innerHTML='<div class="loading-txt">Nog geen projecten. Maak er een aan! 🎮</div>';return;}
+  const tl={mc:'🟢 Minecraft',ue5:'🟣 UE5',web:'🔵 Web App',other:'⚪ Anders'};
+  el.innerHTML=projects.map((p,i)=>`<div class="project-card"><div class="proj-head"><span class="proj-name">${p.name}</span><span class="proj-type proj-${p.type}">${tl[p.type]||p.type}</span></div><div style="font-size:11px;color:var(--soft);font-weight:700;margin-bottom:6px">${p.desc}</div><div class="proj-bar"><div class="proj-fill" style="width:${p.progress||0}%"></div></div><div style="display:flex;justify-content:space-between;margin-top:4px"><span class="g-pct">${p.progress||0}% klaar</span><div class="g-btns"><button class="g-step" onclick="projP(${i},-10)">−</button><button class="g-step" onclick="projP(${i},10)">+</button><button onclick="askDev(${i})" style="background:none;border:1px solid var(--border);border-radius:6px;padding:2px 7px;cursor:pointer;font-size:10px;font-weight:800;font-family:'Nunito',sans-serif;color:var(--purple)">🧸 Hulp</button><button style="background:none;border:none;cursor:pointer;font-size:13px;opacity:0.4" onclick="delProj(${i})">🗑️</button></div></div></div>`).join('');
+}
+function projP(i,d){projects[i].progress=Math.min(100,Math.max(0,(projects[i].progress||0)+d));saveProjects();renderProjects();}
+function delProj(i){projects.splice(i,1);saveProjects();renderProjects();}
+async function addProject(){
+  const n=document.getElementById('proj-name').value.trim();
+  const t=document.getElementById('proj-type').value;
+  const d=document.getElementById('proj-desc').value.trim();
+  if(!n)return;
+  projects.push({name:n,type:t,desc:d||'Nieuw project',progress:0});
+  saveProjects();renderProjects();
+  document.getElementById('proj-name').value='';document.getElementById('proj-desc').value='';
+  const box=document.getElementById('gamedev-ai');box.style.display='block';
+  box.innerHTML='<span class="loading-ring"></span>';
+  try{const r=await ai([{role:'user',content:`Starttips voor "${n}" (${t==='mc'?'Minecraft server':t==='ue5'?'UE5 game':t==='web'?'web app':'project'}). Beschrijving: ${d||'niet opgegeven'}. 3 concrete actiegerichte tips.`}]);box.innerHTML='🎮 '+r;}catch{box.innerHTML='';}
+}
+async function askDev(i){
+  const p=projects[i];
+  const box=document.getElementById('gamedev-ai');box.style.display='block';
+  box.innerHTML='<span class="loading-ring"></span>';
+  try{const r=await ai([{role:'user',content:`Volgende stap voor "${p.name}" (${p.progress}% klaar). ${p.desc}. Geef één concrete volgende actie.`}]);box.innerHTML='🎮 '+r;}catch{box.innerHTML='';}
+}
+
+// ============================================================
+// CASH BOSS
+// ============================================================
+function saveTxs(){ls.set('k-tx',txs);}
+function getBalance(){return txs.reduce((t,tx)=>t+(tx.type==='plus'?tx.amount:-tx.amount),0);}
+function renderCash(){
+  const bal=getBalance();
+  document.getElementById('bal-num').textContent=Math.abs(bal).toFixed(2).replace('.',',');
+  document.getElementById('bal-sub').textContent=bal<0?'⚠️ Meer uitgegeven dan ontvangen!':bal===0?'Begin met bijhouden!':'💪 Goed gespaard!';
+  const el=document.getElementById('tx-list');
+  if(!txs.length){el.innerHTML='<div class="loading-txt">Nog geen transacties</div>';return;}
+  el.innerHTML=[...txs].reverse().slice(0,10).map(tx=>`<div class="tx-item"><div class="tx-icon">${tx.type==='plus'?'💰':'🛒'}</div><div style="flex:1"><div class="tx-desc">${tx.desc}</div><div class="tx-date">${tx.date}</div></div><div class="tx-amount ${tx.type==='plus'?'tx-plus':'tx-minus'}">${tx.type==='plus'?'+':'−'}€${tx.amount.toFixed(2)}</div></div>`).join('');
+}
+async function addTransaction(){
+  const desc=document.getElementById('tx-desc').value.trim();
+  const amt=parseFloat(document.getElementById('tx-amount').value);
+  const type=document.getElementById('tx-type').value;
+  if(!desc||isNaN(amt)||amt<=0)return;
+  txs.push({desc,amount:amt,type,date:new Date().toLocaleDateString('nl-NL',{day:'numeric',month:'short'}),id:Date.now()});
+  saveTxs();renderCash();
+  document.getElementById('tx-desc').value='';document.getElementById('tx-amount').value='';
+  if(txs.length%5===0){
+    const tip=document.getElementById('cash-tip');tip.style.display='block';tip.innerHTML='<span class="loading-ring"></span>';
+    const r=await ai([{role:'user',content:`Saldo: €${getBalance().toFixed(2)}. Geef een korte financiële tip. Max 2 zinnen.`}]);
+    tip.innerHTML='💰 '+r;
+  }
+}
+
+// ============================================================
+// TRAINER
+// ============================================================
+async function loadWorkout(type){
+  const el=document.getElementById('wo-exercises');
+  el.innerHTML='<div class="loading-txt"><span class="loading-ring"></span><br><br>Knorri maakt workout...</div>';
+  const g={kickboxen:'🥊 Kickbokstraining!',voetbal:'⚽ Voetbaltraining!',kracht:'💪 Krachttraining!',cardio:'🏃 Cardio Blast!',stretching:'🧘 Stretchen!'};
+  document.getElementById('wo-greet').textContent=g[type]||'Let\'s go!';
+  try{
+    const r=await ai([{role:'user',content:`${type} workout, 5 oefeningen. JSON: [{"naam":"...","sets":"...","uitleg":"..."},...]. Alleen JSON.`}]);
+    const exs=JSON.parse(r.replace(/```json|```/g,'').trim());
+    el.innerHTML=exs.map((e,i)=>`<div class="ex-card"><div class="ex-num">${i+1}</div><div class="ex-info"><h4>${e.naam}</h4><p>${e.uitleg}</p></div><div class="ex-badge">${e.sets}</div></div>`).join('');
+  }catch{el.innerHTML='<div class="loading-txt">Probeer opnieuw!</div>';}
+}
+function startTimer(sec){
+  stopTimer();timerLeft=sec;
+  document.getElementById('timer-label').textContent='⏱️ Bezig...';
+  timerInt=setInterval(()=>{
+    if(timerLeft<=0){stopTimer();document.getElementById('timer-num').textContent='KLAAR! 🎉';return;}
+    const m=Math.floor(timerLeft/60),s=timerLeft%60;
+    document.getElementById('timer-num').textContent=`${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`;
+    timerLeft--;
+  },1000);
+}
+function stopTimer(){clearInterval(timerInt);timerInt=null;document.getElementById('timer-label').textContent='Rust / Klaar';document.getElementById('timer-num').textContent='00:00';}
+
+// ============================================================
+// VERHAAL
+// ============================================================
+function pickGenre(el,v){document.querySelectorAll('#genre-picker .story-opt').forEach(e=>e.classList.remove('picked'));el.classList.add('picked');selectedGenre=v;}
+async function generateStory(){
+  const char=document.getElementById('story-char').value.trim();
+  const setting=document.getElementById('story-setting').value.trim();
+  const r=document.getElementById('story-result');
+  if(!char){r.innerHTML='<div class="ai-box">🧸 Beschrijf je hoofdpersoon!</div>';return;}
+  r.innerHTML='<div class="loading-txt"><span class="loading-ring"></span><br><br>Knorri schrijft...</div>';
+  storyCtx=[];
+  const p=`Schrijf spannend eerste hoofdstuk (~250 woorden) in het Nederlands. Genre: ${selectedGenre||'avontuur'}. Held: ${char}. Setting: ${setting||'onbekend'}. Eindig op cliffhanger.`;
+  try{
+    const reply=await ai([{role:'user',content:p}]);
+    storyCtx=[{role:'user',content:p},{role:'assistant',content:reply}];
+    r.innerHTML=`<div class="story-display"><div class="chap-badge">📖 Hoofdstuk 1</div><br>${reply.replace(/\n/g,'<br>')}</div>`;
+    document.getElementById('cont-row').style.display='flex';
+  }catch{r.innerHTML='<div class="ai-box">🧸 Probeer opnieuw!</div>';}
+}
+async function continueStory(){
+  const cont=document.getElementById('story-cont').value||'Ga door.';
+  const r=document.getElementById('story-result');
+  const loading=document.createElement('div');loading.className='loading-txt';loading.innerHTML='<span class="loading-ring"></span> Knorri schrijft verder...';r.appendChild(loading);
+  const chap=Math.floor(storyCtx.length/2)+1;
+  storyCtx.push({role:'user',content:`Volgende hoofdstuk ~200 woorden. Aanwijzing: ${cont}`});
+  try{
+    const reply=await ai(storyCtx);
+    storyCtx.push({role:'assistant',content:reply});
+    loading.remove();
+    r.innerHTML+=`<div class="story-display" style="margin-top:9px"><div class="chap-badge">📖 Hoofdstuk ${chap}</div><br>${reply.replace(/\n/g,'<br>')}</div>`;
+    document.getElementById('story-cont').value='';
+  }catch{loading.remove();}
+}
+
+// ============================================================
+// SLAAP
+// ============================================================
+let sleepQualVal=0;
+function pickQual(btn,v){document.querySelectorAll('.qual-btn').forEach(b=>b.classList.remove('selected'));btn.classList.add('selected');sleepQualVal=v;}
+function initSlaap(){
+  setInterval(()=>{
+    const now=new Date();
+    document.getElementById('sleep-clock-time').textContent=now.toLocaleTimeString('nl-NL',{hour:'2-digit',minute:'2-digit'});
+  },1000);
+  renderSleepHist();
+}
+function renderSleepHist(){
+  const el=document.getElementById('sleep-hist');
+  if(!sleepLogs.length){el.innerHTML='<div class="loading-txt">Nog geen slaapdata 😴</div>';return;}
+  el.innerHTML=[...sleepLogs].reverse().slice(0,7).map(s=>`<div class="dream-entry"><h4>${s.date} <span class="sleep-stars">${'⭐'.repeat(s.qual)}</span></h4><p>${s.from} → ${s.to} · ${s.hours}u geslapen${s.dream?`<br>💭 "${s.dream}"`:''}</p></div>`).join('');
+}
+async function saveSleep(){
+  const from=document.getElementById('sleep-from').value;
+  const to=document.getElementById('sleep-to').value;
+  const dream=document.getElementById('dream-txt').value.trim();
+  if(!from||!to){const box=document.getElementById('sleep-ai');box.style.display='block';box.innerHTML='🧸 Vul slaap- en wektijd in!';return;}
+  const [fh,fm]=from.split(':').map(Number);const [th,tm]=to.split(':').map(Number);
+  let hours=th+tm/60-fh-fm/60;if(hours<0)hours+=24;hours=Math.round(hours*10)/10;
+  sleepLogs.push({from,to,hours,qual:sleepQualVal||3,dream,date:new Date().toLocaleDateString('nl-NL',{day:'numeric',month:'short'})});
+  ls.set('k-sleep',sleepLogs);
+  usage.sleeps++;ls.set('k-usage',usage);
+  renderSleepHist();
+  const box=document.getElementById('sleep-ai');box.style.display='block';box.innerHTML='<span class="loading-ring"></span>';
+  const r=await ai([{role:'user',content:`Ik sliep ${hours}u (kwaliteit: ${sleepQualVal}/5)${dream?`, droomde: ${dream}`:''}. Korte tip over slaap. Max 2 zinnen.`}]);
+  box.innerHTML='🌙 '+r;
+}
+
+// ============================================================
+// WERELD
+// ============================================================
+function saveDest(){ls.set('k-dest',destinations);}
+async function addDest(){const inp=document.getElementById('dest-input');await addDestImpl(inp.value.trim());inp.value='';}
+async function addDestP(v){await addDestImpl(v);}
+async function addDestImpl(name){
+  if(!name)return;
+  const el=document.getElementById('dest-list');
+  const load=document.createElement('div');load.className='loading-txt';load.innerHTML='<span class="loading-ring"></span>';el.prepend(load);
+  try{
+    const r=await ai([{role:'user',content:`Info over "${name}" in JSON: {"vlag":"🏳️","naam":"...","beschrijving":"... (2 zinnen)","tags":["...","..."]}. Alleen JSON.`}]);
+    const d=JSON.parse(r.replace(/```json|```/g,'').trim());
+    destinations.push({...d,visited:false,id:Date.now()});
+  }catch{destinations.push({vlag:'🌍',naam:name,beschrijving:'Geweldige bestemming!',tags:['avontuur'],visited:false,id:Date.now()});}
+  saveDest();renderDest();load.remove();
+}
+function renderDest(){
+  const visited=destinations.filter(d=>d.visited).length;
+  document.getElementById('visited-count').textContent=`${visited} van ${destinations.length} bezocht`;
+  const el=document.getElementById('dest-list');
+  if(!destinations.length){el.innerHTML='<div class="loading-txt">Voeg droombestemmingen toe! 🌍</div>';return;}
+  el.innerHTML=destinations.map((d,i)=>`<div class="dest-card"><div class="dest-flag">${d.vlag||'🌍'}</div><div class="dest-info"><h4>${d.naam}</h4><p>${d.beschrijving}</p><div class="dest-tags">${(d.tags||[]).map(t=>`<span class="dest-tag">${t}</span>`).join('')}</div></div><button class="vis-btn ${d.visited?'done':''}" onclick="toggleVis(${i})">${d.visited?'✓':'Markeer'}</button></div>`).join('');
+}
+function toggleVis(i){destinations[i].visited=!destinations[i].visited;saveDest();renderDest();}
+
+// ============================================================
+// STATISTIEKEN
+// ============================================================
+function renderStats(){
+  const totalTasks=Object.values(tasks).flat().length;
+  const doneTasks=Object.values(tasks).flat().filter(t=>t.done).length;
+  const avgSleep=sleepLogs.length?Math.round(sleepLogs.reduce((s,l)=>s+l.hours,0)/sleepLogs.length*10)/10:0;
+  const earned=txs.filter(t=>t.type==='plus').reduce((s,t)=>s+t.amount,0);
+
+  document.getElementById('stats-grid').innerHTML=`
+    <div class="stat-card"><span class="stat-icon">💬</span><div class="stat-num">${usage.chats}</div><div class="stat-label">Chats met Knorri</div></div>
+    <div class="stat-card"><span class="stat-icon">⭐</span><div class="stat-num">${goals.filter(g=>g.progress===100).length}</div><div class="stat-label">Doelen behaald</div></div>
+    <div class="stat-card"><span class="stat-icon">✅</span><div class="stat-num">${doneTasks}</div><div class="stat-label">Taken gedaan</div></div>
+    <div class="stat-card"><span class="stat-icon">🌙</span><div class="stat-num">${avgSleep}u</div><div class="stat-label">Gem. slaap</div></div>
+    <div class="stat-card"><span class="stat-icon">🍳</span><div class="stat-num">${usage.recipes}</div><div class="stat-label">Recepten gemaakt</div></div>
+    <div class="stat-card"><span class="stat-icon">💰</span><div class="stat-num">€${earned.toFixed(0)}</div><div class="stat-label">Totaal verdiend</div></div>
+  `;
+
+  // Mood bars
+  const moodCounts={};
+  moodLog.forEach(m=>{const key=m.mood.split(' ')[0];moodCounts[key]=(moodCounts[key]||0)+1;});
+  const maxMood=Math.max(...Object.values(moodCounts),1);
+  const moodEl=document.getElementById('mood-bars');
+  if(!Object.keys(moodCounts).length){moodEl.innerHTML='<div class="loading-txt" style="padding:10px">Nog geen gevoelens gelogd 😊</div>';return;}
+  moodEl.innerHTML=Object.entries(moodCounts).sort((a,b)=>b[1]-a[1]).slice(0,5).map(([m,c])=>`<div class="stat-bar-row"><span class="stat-bar-label">${m}</span><div class="stat-bar"><div class="stat-bar-fill" style="width:${c/maxMood*100}%"></div></div><span class="stat-bar-val">${c}x</span></div>`).join('');
+
+  // Achievements
+  const achs=[];
+  if(usage.chats>=1)achs.push({icon:'💬',name:'Eerste chat!',desc:'Je hebt Knorri aangesproken',badge:'Beginner'});
+  if(usage.chats>=10)achs.push({icon:'🔥',name:'Gezellig!',desc:'10 gesprekken met Knorri',badge:'Regulier'});
+  if(goals.filter(g=>g.progress===100).length>=1)achs.push({icon:'🏆',name:'Doel behaald!',desc:'Je hebt je eerste doel voltooid',badge:'Winnaar'});
+  if(usage.recipes>=3)achs.push({icon:'👨‍🍳',name:'Chef Knorri',desc:'3 recepten gemaakt',badge:'Chef'});
+  if(usage.outfits>=1)achs.push({icon:'👕',name:'Mode Designer',desc:'Je eerste outfit ontworpen',badge:'Designer'});
+  if(sleepLogs.length>=3)achs.push({icon:'🌙',name:'Slaap tracker',desc:'3 nachten bijgehouden',badge:'Gezond'});
+  if(destinations.length>=3)achs.push({icon:'🌍',name:'Wereldreiziger',desc:'3 bestemmingen toegevoegd',badge:'Avonturier'});
+
+  document.getElementById('achievements').innerHTML=achs.length?achs.map(a=>`<div class="achievement"><div class="ach-icon">${a.icon}</div><div class="ach-info"><h4>${a.name}</h4><p>${a.desc}</p></div><div class="ach-badge">${a.badge}</div></div>`).join(''):'<div class="loading-txt">Gebruik Knorri meer om prestaties te verdienen! 🏆</div>';
+
+  // AI analyse
+  if(usage.chats>=5){
+    const box=document.getElementById('stats-ai');box.style.display='block';
+    box.innerHTML=`🧸 Je hebt al ${usage.chats} gesprekken gevoerd, ${goals.length} doelen gezet en ${doneTasks} taken afgemaakt. Knorri is trots op je! Blijf zo doorgaan! 💜`;
+  }
+}
+
+// ============================================================
+// GEHEUGEN
+// ============================================================
+let memSaveTimeout=null;
+function initMemory(){
+  document.getElementById('mem-name').value=memory.name||'';
+  document.getElementById('mem-hobbies').value=memory.hobbies||'';
+  document.getElementById('mem-projects').value=memory.projects||'';
+  document.getElementById('mem-dream').value=memory.dream||'';
+  document.getElementById('mem-school').value=memory.school||'';
+  document.getElementById('mem-city').value=memory.city||'';
+  updateWelcomeName();
+  renderKnowTags();
+}
+function saveMem(){
+  memory.name=document.getElementById('mem-name').value;
+  memory.hobbies=document.getElementById('mem-hobbies').value;
+  memory.projects=document.getElementById('mem-projects').value;
+  memory.dream=document.getElementById('mem-dream').value;
+  memory.school=document.getElementById('mem-school').value;
+  memory.city=document.getElementById('mem-city').value;
+  ls.set('k-memory',memory);
+  const ind=document.getElementById('mem-saved-indicator');
+  ind.style.display='inline-flex';
+  clearTimeout(memSaveTimeout);
+  memSaveTimeout=setTimeout(()=>ind.style.display='none',2000);
+  updateWelcomeName();
+  renderKnowTags();
+}
+function updateWelcomeName(){
+  if(memory.name){
+    document.getElementById('welcome-name').textContent=`Hey ${memory.name}! 🎉`;
+  }
+}
+function renderKnowTags(){
+  const tags=[];
+  if(memory.name) tags.push(`👤 ${memory.name}`);
+  if(memory.hobbies) tags.push(`❤️ ${memory.hobbies}`);
+  if(memory.projects) tags.push(`🔨 ${memory.projects}`);
+  if(memory.dream) tags.push(`🔮 ${memory.dream}`);
+  if(memory.school) tags.push(`📚 ${memory.school}`);
+  if(memory.city) tags.push(`📍 ${memory.city}`);
+  const el=document.getElementById('know-tags');
+  el.innerHTML=tags.length?tags.map(t=>`<span class="know-tag">${t}</span>`).join(''):'<span style="font-size:12px;color:var(--soft);font-weight:700">Knorri weet nog niets over je. Vul je info in!</span>';
+}
+async function testMemory(){
+  showScreen('chat');
+  const name=memory.name||'jij';
+  quickSend(`Knorri, wat weet je allemaal over mij?`);
+}
+
+// ============================================================
+// INIT
+// ============================================================
+initPlanning();
+initSpeech();
+initMemory();
+</script>
+
+<script>
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('./sw.js')
+      .then(r => console.log('Knorri SW actief ✅'))
+      .catch(e => console.log('SW fout:', e));
+  });
+}
+
+// ============================================================
+// API KEY MANAGEMENT
+// ============================================================
+let API_KEY = localStorage.getItem('k-groq-key') || '';
+
+function checkApiKey() {
+  if (!API_KEY) {
+    document.getElementById('api-setup').style.display = 'flex';
+  }
+}
+
+function toggleKeyVis() {
+  const inp = document.getElementById('api-key-input');
+  const btn = document.getElementById('key-toggle-btn');
+  if (inp.type === 'password') { inp.type = 'text'; btn.textContent = '🙈'; }
+  else { inp.type = 'password'; btn.textContent = '👁️'; }
+}
+
+function saveApiKey() {
+  const key = document.getElementById('api-key-input').value.trim();
+  const err = document.getElementById('setup-error');
+  if (!key.startsWith('gsk_')) {
+    err.style.display = 'block';
+    return;
+  }
+  err.style.display = 'none';
+  API_KEY = key;
+  localStorage.setItem('k-groq-key', key);
+  document.getElementById('api-setup').style.display = 'none';
+}
+
+// Override ai() to use stored key
+async function ai(messages, customSystem) {
+  if (!API_KEY) { checkApiKey(); throw new Error('No API key'); }
+  const sys = customSystem || buildSystem();
+  const groqMessages = [{ role: 'system', content: sys }, ...messages];
+  const r = await fetch('https://api.groq.com/openai/v1/chat/completions', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': 'Bearer ' + API_KEY
+    },
+    body: JSON.stringify({
+      model: 'llama-3.3-70b-versatile',
+      max_tokens: 1000,
+      messages: groqMessages
+    })
+  });
+  if (!r.ok) {
+    const err = await r.json().catch(()=>({error:{message:'Onbekende fout'}}));
+    if (r.status === 401) {
+      localStorage.removeItem('k-groq-key');
+      API_KEY = '';
+      checkApiKey();
+      throw new Error('Invalid key');
+    }
+    throw new Error(err.error?.message || 'API fout');
+  }
+  const d = await r.json();
+  return d.choices?.[0]?.message?.content || 'Oeps! Probeer opnieuw 🧸';
+}
+
+// INIT API KEY CHECK
+checkApiKey();
+
+// ============================================================
+// AUTH & CHAT HISTORY SYSTEM
+// ============================================================
+let currentUser = null;
+let currentChatId = null;
+let allChats = {};
+
+// ── Hash functie (simpele checksum, geen echte crypto nodig voor local) ──
+function simpleHash(str) {
+  let hash = 0;
+  for (let i = 0; i < str.length; i++) {
+    const c = str.charCodeAt(i);
+    hash = ((hash << 5) - hash) + c;
+    hash |= 0;
+  }
+  return hash.toString(36);
+}
+
+// ── AUTH TAB SWITCH ──
+function switchAuthTab(tab) {
+  document.getElementById('tab-login').classList.toggle('active', tab === 'login');
+  document.getElementById('tab-register').classList.toggle('active', tab === 'register');
+  document.getElementById('form-login').style.display = tab === 'login' ? 'block' : 'none';
+  document.getElementById('form-register').style.display = tab === 'register' ? 'block' : 'none';
+  document.getElementById('auth-error').style.display = 'none';
+  document.getElementById('auth-success').style.display = 'none';
+}
+
+function showAuthError(msg) {
+  const el = document.getElementById('auth-error');
+  el.textContent = '❌ ' + msg;
+  el.style.display = 'block';
+  document.getElementById('auth-success').style.display = 'none';
+}
+function showAuthSuccess(msg) {
+  const el = document.getElementById('auth-success');
+  el.textContent = '✅ ' + msg;
+  el.style.display = 'block';
+  document.getElementById('auth-error').style.display = 'none';
+}
+
+// ── REGISTER ──
+function doRegister() {
+  const name = document.getElementById('reg-name').value.trim();
+  const email = document.getElementById('reg-email').value.trim().toLowerCase();
+  const pass = document.getElementById('reg-pass').value;
+
+  if (!name) return showAuthError('Vul je naam in');
+  if (!email || !email.includes('@')) return showAuthError('Ongeldig e-mailadres');
+  if (pass.length < 6) return showAuthError('Wachtwoord moet minstens 6 tekens zijn');
+
+  const users = ls.get('k-users', {});
+  if (users[email]) return showAuthError('Dit e-mailadres bestaat al. Log in!');
+
+  users[email] = {
+    name, email,
+    passHash: simpleHash(pass + email),
+    createdAt: Date.now()
+  };
+  ls.set('k-users', users);
+  showAuthSuccess('Account aangemaakt! Log nu in.');
+  setTimeout(() => switchAuthTab('login'), 1200);
+  document.getElementById('login-email').value = email;
+}
+
+// ── LOGIN ──
+function doLogin() {
+  const emailOrName = document.getElementById('login-email').value.trim().toLowerCase();
+  const pass = document.getElementById('login-pass').value;
+
+  if (!emailOrName || !pass) return showAuthError('Vul alles in');
+
+  const users = ls.get('k-users', {});
+
+  // Zoek op email of naam
+  const user = users[emailOrName] ||
+    Object.values(users).find(u => u.name.toLowerCase() === emailOrName);
+
+  if (!user) return showAuthError('Geen account gevonden. Maak er een aan!');
+
+  if (simpleHash(pass + user.email) !== user.passHash) {
+    return showAuthError('Verkeerd wachtwoord');
+  }
+
+  // Inloggen
+  currentUser = user;
+  ls.set('k-session', user.email);
+  document.getElementById('auth-screen').style.display = 'none';
+  onUserLoggedIn();
+}
+
+// ── LOGOUT ──
+function doLogout() {
+  if (!confirm('Wil je uitloggen?')) return;
+  currentUser = null;
+  currentChatId = null;
+  chatHistory = [];
+  ls.set('k-session', null);
+  document.getElementById('auth-screen').style.display = 'flex';
+  closeSidebar();
+  // Reset chat UI
+  document.getElementById('chat-messages').innerHTML =
+    '<div class="msg msg-k"><div class="msg-s">🧸 Knorri</div>Heeey! Log in om met mij te chatten! 💜</div>';
+}
+
+// ── SESSIE HERSTELLEN ──
+function checkSession() {
+  const savedEmail = ls.get('k-session', null);
+  if (savedEmail) {
+    const users = ls.get('k-users', {});
+    if (users[savedEmail]) {
+      currentUser = users[savedEmail];
+      document.getElementById('auth-screen').style.display = 'none';
+      onUserLoggedIn();
+      return;
+    }
+  }
+  document.getElementById('auth-screen').style.display = 'flex';
+}
+
+// ── NA LOGIN ──
+function onUserLoggedIn() {
+  // Update memory met naam
+  if (!memory.name && currentUser?.name) {
+    memory.name = currentUser.name;
+    ls.set('k-memory', memory);
+  }
+
+  // Update sidebar
+  document.getElementById('sidebar-username').textContent =
+    '👤 ' + (currentUser?.name || 'Gebruiker');
+
+  // Laad chat geschiedenis
+  loadUserChats();
+
+  // Update welkom bericht
+  const welcomeEl = document.getElementById('welcome-name');
+  if (welcomeEl) welcomeEl.textContent = 'Hey ' + (currentUser?.name || '') + '! 🎉';
+
+  // Start een nieuwe chat of herstel de laatste
+  const userChats = getUserChats();
+  if (userChats.length > 0) {
+    // Herstel laatste chat
+    loadChat(userChats[0].id);
+  } else {
+    newChat();
+  }
+
+  checkApiKey();
+}
+
+// ============================================================
+// CHAT SESSIONS
+// ============================================================
+function getUserChats() {
+  if (!currentUser) return [];
+  const key = 'k-chats-' + currentUser.email;
+  return ls.get(key, []);
+}
+
+function saveUserChats(chats) {
+  if (!currentUser) return;
+  const key = 'k-chats-' + currentUser.email;
+  ls.set(key, chats);
+}
+
+function newChat() {
+  const id = 'chat-' + Date.now();
+  const chat = {
+    id,
+    title: 'Nieuw gesprek',
+    createdAt: Date.now(),
+    updatedAt: Date.now(),
+    messages: [{
+      role: 'assistant',
+      content: 'Heeey! 🎉 Ik ben Knorri, jouw slimme buddy! Wat wil je doen vandaag? 💜'
+    }]
+  };
+
+  const chats = getUserChats();
+  chats.unshift(chat);
+  saveUserChats(chats);
+
+  currentChatId = id;
+  chatHistory = [];
+
+  // Reset UI
+  const msgsEl = document.getElementById('chat-messages');
+  if (msgsEl) {
+    msgsEl.innerHTML = '<div class="msg msg-k"><div class="msg-s">🧸 Knorri</div>Heeey! 🎉 Ik ben Knorri, jouw slimme buddy! Wat wil je doen vandaag? 💜</div>';
+  }
+
+  loadUserChats();
+  closeSidebar();
+  showScreen('chat');
+}
+
+function loadChat(chatId) {
+  const chats = getUserChats();
+  const chat = chats.find(c => c.id === chatId);
+  if (!chat) return;
+
+  currentChatId = chatId;
+
+  // Herstel chat messages in UI
+  const msgsEl = document.getElementById('chat-messages');
+  if (msgsEl) {
+    msgsEl.innerHTML = '';
+    chatHistory = [];
+
+    for (const msg of chat.messages) {
+      const d = document.createElement('div');
+      d.className = msg.role === 'user' ? 'msg msg-u' : 'msg msg-k';
+      d.innerHTML = '<div class="msg-s">' + (msg.role === 'user' ? (currentUser?.name || '👤 Jij') : '🧸 Knorri') + '</div>' + msg.content;
+      msgsEl.appendChild(d);
+
+      if (msg.role !== 'assistant' || chatHistory.length > 0) {
+        chatHistory.push({ role: msg.role, content: msg.content });
+      }
+    }
+    msgsEl.scrollTop = msgsEl.scrollHeight;
+  }
+
+  loadUserChats();
+  closeSidebar();
+  showScreen('chat');
+}
+
+function deleteChat(chatId, event) {
+  event.stopPropagation();
+  const chats = getUserChats().filter(c => c.id !== chatId);
+  saveUserChats(chats);
+  if (currentChatId === chatId) {
+    if (chats.length > 0) loadChat(chats[0].id);
+    else newChat();
+  }
+  loadUserChats();
+}
+
+function saveChatMessage(role, content) {
+  if (!currentChatId || !currentUser) return;
+  const chats = getUserChats();
+  const chat = chats.find(c => c.id === currentChatId);
+  if (!chat) return;
+
+  chat.messages.push({ role, content });
+  chat.updatedAt = Date.now();
+
+  // Auto-titel van eerste user bericht
+  if (chat.title === 'Nieuw gesprek' && role === 'user') {
+    chat.title = content.substring(0, 35) + (content.length > 35 ? '...' : '');
+  }
+
+  saveUserChats(chats);
+  loadUserChats();
+}
+
+function loadUserChats() {
+  const list = document.getElementById('chat-history-list');
+  if (!list) return;
+  const chats = getUserChats();
+
+  if (chats.length === 0) {
+    list.innerHTML = '<div style="padding:16px;font-size:11px;color:rgba(255,255,255,0.3);font-weight:700;text-align:center">Nog geen gesprekken</div>';
+    return;
+  }
+
+  list.innerHTML = chats.map(chat => {
+    const date = new Date(chat.updatedAt).toLocaleDateString('nl-NL', { day: 'numeric', month: 'short' });
+    const isActive = chat.id === currentChatId;
+    return '<div class="chat-hist-item ' + (isActive ? 'active' : '') + '" onclick="loadChat(\'' + chat.id + '\')">' +
+      '<span class="chi-icon">💬</span>' +
+      '<div class="chi-info">' +
+        '<div class="chi-title">' + escapeHtml(chat.title) + '</div>' +
+        '<div class="chi-date">' + date + '</div>' +
+      '</div>' +
+      '<button class="chi-del" onclick="deleteChat(\'' + chat.id + '\', event)">🗑️</button>' +
+    '</div>';
+  }).join('');
+}
+
+function escapeHtml(str) {
+  return str.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+// ── SIDEBAR ──
+function openSidebar() {
+  document.getElementById('chat-sidebar').classList.add('open');
+  document.getElementById('sidebar-overlay').classList.add('show');
+}
+function closeSidebar() {
+  document.getElementById('chat-sidebar').classList.remove('open');
+  document.getElementById('sidebar-overlay').classList.remove('show');
+}
+
+// ============================================================
+// PATCH sendMessage om chats op te slaan
+// ============================================================
+const _origSend = sendMessage;
+// Override wordt gedaan via monkey-patch na INIT
+
+
+// ── INIT AUTH ──
+checkSession();
+
+// ============================================================
+// SUBSCRIPTION SYSTEM
+// ============================================================
+const PLANS = {
+  free:  { name: 'Gratis',  dailyLimit: 20,  badge: '🆓', badgeClass: 'badge-free' },
+  plus:  { name: 'Plus',    dailyLimit: 200, badge: '💜', badgeClass: 'badge-plus',  price: '2.99', stripeLink: 'https://buy.stripe.com/VERVANG_MET_JOUW_PLUS_LINK' },
+  pro:   { name: 'Pro',     dailyLimit: 500, badge: '🏆', badgeClass: 'badge-pro',   price: '6.99', stripeLink: 'https://buy.stripe.com/VERVANG_MET_JOUW_PRO_LINK' },
+  ultra: { name: 'Ultra',   dailyLimit: 99999, badge: '🌟', badgeClass: 'badge-ultra', price: '12.99', stripeLink: 'https://buy.stripe.com/VERVANG_MET_JOUW_ULTRA_LINK' }
+};
+
+// Tabs beschikbaar per plan
+const PLAN_TABS = {
+  free:  ['chat','mood','planning','goals','stats','geheugen'],
+  plus:  ['chat','mood','planning','goals','stats','geheugen','beat','mode','verhaal','slaap','wereld'],
+  pro:   ['chat','mood','planning','goals','stats','geheugen','beat','mode','verhaal','slaap','wereld','toekomst','gamedev','cash'],
+  ultra: ['chat','mood','planning','goals','stats','geheugen','beat','mode','verhaal','slaap','wereld','toekomst','gamedev','cash','kook','trainer']
+};
+
+function getUserPlan() {
+  if (!currentUser) return 'free';
+  const key = 'k-plan-' + currentUser.email;
+  return ls.get(key, 'free');
+}
+
+function setUserPlan(plan) {
+  if (!currentUser) return;
+  const key = 'k-plan-' + currentUser.email;
+  ls.set(key, plan);
+}
+
+function getTodayUsage() {
+  if (!currentUser) return 0;
+  const today = new Date().toDateString();
+  const key = 'k-usage-' + currentUser.email + '-' + today;
+  return ls.get(key, 0);
+}
+
+function incrementUsage() {
+  if (!currentUser) return;
+  const today = new Date().toDateString();
+  const key = 'k-usage-' + currentUser.email + '-' + today;
+  ls.set(key, getTodayUsage() + 1);
+}
+
+function checkMessageLimit() {
+  const plan = getUserPlan();
+  const limit = PLANS[plan].dailyLimit;
+  const used = getTodayUsage();
+
+  if (used >= limit) {
+    showLimitBanner(used, limit, plan);
+    return false;
+  }
+
+  // Waarschuwing als bijna vol (80%)
+  if (used >= limit * 0.8 && plan !== 'ultra') {
+    const remaining = limit - used;
+    showPopup('⚠️ Nog ' + remaining + ' berichten vandaag — upgrade voor meer!');
+  }
+  return true;
+}
+
+function showLimitBanner(used, limit, plan) {
+  const banner = document.getElementById('limit-banner');
+  const text = document.getElementById('limit-text');
+  if (plan === 'free') {
+    text.textContent = '🔒 Dagelijkse limiet bereikt (' + used + '/' + limit + '). Upgrade voor meer!';
+  } else {
+    text.textContent = '🔒 ' + used + '/' + limit + ' berichten gebruikt vandaag.';
+  }
+  banner.classList.add('show');
+  setTimeout(() => banner.classList.remove('show'), 8000);
+}
+
+function openSubModal() {
+  const plan = getUserPlan();
+  document.getElementById('current-plan-name').textContent = PLANS[plan].name;
+  document.getElementById('sub-modal').classList.add('show');
+  updatePlanButtons(plan);
+}
+
+function closeSubModal() {
+  document.getElementById('sub-modal').classList.remove('show');
+}
+
+function updatePlanButtons(currentPlan) {
+  const plans = ['free','plus','pro','ultra'];
+  plans.forEach(p => {
+    const btn = document.querySelector('#plan-' + p + ' .plan-btn');
+    if (!btn) return;
+    if (p === currentPlan) {
+      btn.textContent = '✓ Huidig plan';
+      btn.disabled = true;
+      btn.style.opacity = '0.6';
+    }
+  });
+}
+
+function selectPlan(plan) {
+  if (plan === 'free') {
+    closeSubModal();
+    return;
+  }
+
+  const planData = PLANS[plan];
+  if (!planData.stripeLink || planData.stripeLink.includes('VERVANG')) {
+    // Demo mode — activeer plan direct (voor testen)
+    setUserPlan(plan);
+    document.getElementById('current-plan-name').textContent = planData.name;
+    updatePlanButtons(plan);
+    updateTabBarForPlan(plan);
+
+    // Toon uitleg
+    document.getElementById('payment-steps').style.display = 'block';
+
+    showPopup('🎉 Plan geactiveerd (demo)! Stripe link nog niet ingesteld.');
+    return;
+  }
+
+  // Echte Stripe checkout
+  window.open(planData.stripeLink + '?prefilled_email=' + encodeURIComponent(currentUser?.email || ''), '_blank');
+
+  // Na 3 seconden, toon instructie
+  setTimeout(() => {
+    closeSubModal();
+    showPopup('💳 Betalen via Stripe — kom terug na betaling!');
+  }, 2000);
+}
+
+function updateTabBarForPlan(plan) {
+  const allowed = PLAN_TABS[plan] || PLAN_TABS.free;
+  document.querySelectorAll('.tab-btn').forEach(btn => {
+    const screen = btn.getAttribute('data-s');
+    if (!allowed.includes(screen)) {
+      btn.style.opacity = '0.35';
+      const label = btn.querySelector('.tl');
+      if (label && !label.textContent.includes('🔒')) {
+        label.textContent = '🔒 ' + label.textContent;
+      }
+    } else {
+      btn.style.opacity = '1';
+    }
+  });
+}
+
+// Patch showScreen om plan check te doen
+const _origShowScreen = showScreen;
+function showScreen(name, btn) {
+  const plan = getUserPlan();
+  const allowed = PLAN_TABS[plan] || PLAN_TABS.free;
+
+  if (!allowed.includes(name)) {
+    openSubModal();
+    showPopup('🔒 Dit is een premium feature — upgrade je plan!');
+    return;
+  }
+  _origShowScreen(name, btn);
+}
+
+// Patch sendMessage om limiet te checken
+const _origSendMessage = sendMessage;
+async function sendMessage() {
+  if (!checkMessageLimit()) {
+    openSubModal();
+    return;
+  }
+  incrementUsage();
+  await _origSendMessage();
+}
+
+// Init plan UI after login
+const _origOnLogin = onUserLoggedIn;
+function onUserLoggedIn() {
+  _origOnLogin();
+  const plan = getUserPlan();
+  updateTabBarForPlan(plan);
+  // Show premium crown in header
+  const badge = document.createElement("span");
+  badge.className = "plan-badge " + PLANS[plan].badgeClass;
+  badge.innerHTML = PLANS[plan].badge + " " + PLANS[plan].name;
+  badge.style.cssText = "cursor:pointer;margin-left:6px;";
+  badge.onclick = openSubModal;
+  const hInfo = document.querySelector(".h-info");
+  if (hInfo && !hInfo.querySelector(".plan-badge")) hInfo.appendChild(badge);
+}
+</script>
+
+<div id="api-setup" style="display:none">
+  <div class="setup-card">
+    <span class="setup-bear">🧸</span>
+    <h2>Welkom bij Knorri!</h2>
+    <p>Om te werken heeft Knorri een gratis Groq API key nodig. Dit doe je maar één keer!</p>
+    <div class="setup-steps">
+      <div class="setup-step"><div class="step-num">1</div><div>Ga naar <a href="https://console.groq.com" target="_blank" class="setup-link">console.groq.com</a> en maak gratis een account</div></div>
+      <div class="setup-step"><div class="step-num">2</div><div>Ga naar <strong>API Keys</strong> → klik <strong>"Create API Key"</strong></div></div>
+      <div class="setup-step"><div class="step-num">3</div><div>Kopieer de key (begint met <strong>gsk_...</strong>) en plak hem hieronder</div></div>
+    </div>
+    <div id="setup-error" class="setup-error">❌ Ongeldige key. Controleer of hij begint met gsk_</div>
+    <div class="key-input-wrap">
+      <input type="password" id="api-key-input" placeholder="gsk_..." autocomplete="off">
+      <button class="key-toggle" onclick="toggleKeyVis()" id="key-toggle-btn">👁️</button>
+    </div>
+    <button class="btn-p btn-full" onclick="saveApiKey()">🚀 Knorri starten!</button>
+    <p style="font-size:10px;margin-top:10px;color:var(--soft)">🔒 Je key wordt alleen in jouw browser opgeslagen. Nooit gedeeld.</p>
+  </div>
+</div>
+
+<!-- ===== AUTH SCREEN ===== -->
+<div id="auth-screen">
+  <div class="auth-card">
+    <span class="auth-bear">🧸</span>
+    <h2>Welkom bij Knorri!</h2>
+    <p>Log in of maak een account om te beginnen</p>
+
+    <div class="auth-tabs">
+      <button class="auth-tab active" id="tab-login" onclick="switchAuthTab('login')">Inloggen</button>
+      <button class="auth-tab" id="tab-register" onclick="switchAuthTab('register')">Account maken</button>
+    </div>
+
+    <div id="auth-error" class="auth-error"></div>
+    <div id="auth-success" class="auth-success"></div>
+
+    <!-- LOGIN -->
+    <div id="form-login">
+      <div class="auth-field">
+        <label>E-mailadres of gebruikersnaam</label>
+        <input type="text" id="login-email" placeholder="jij@example.com" autocomplete="username">
+      </div>
+      <div class="auth-field">
+        <label>Wachtwoord</label>
+        <input type="password" id="login-pass" placeholder="••••••••" autocomplete="current-password" onkeydown="if(event.key==='Enter')doLogin()">
+      </div>
+      <button class="btn-p btn-full" onclick="doLogin()" style="margin-top:8px">Inloggen 🚀</button>
+    </div>
+
+    <!-- REGISTER -->
+    <div id="form-register" style="display:none">
+      <div class="auth-field">
+        <label>Naam</label>
+        <input type="text" id="reg-name" placeholder="jouw naam" autocomplete="name">
+      </div>
+      <div class="auth-field">
+        <label>E-mailadres</label>
+        <input type="email" id="reg-email" placeholder="jij@example.com" autocomplete="email">
+      </div>
+      <div class="auth-field">
+        <label>Wachtwoord (min. 6 tekens)</label>
+        <input type="password" id="reg-pass" placeholder="••••••••" autocomplete="new-password" onkeydown="if(event.key==='Enter')doRegister()">
+      </div>
+      <button class="btn-p btn-full" onclick="doRegister()" style="margin-top:8px">Account maken ✨</button>
+    </div>
+
+    <p style="font-size:9px;margin-top:12px;color:var(--soft);text-align:center">🔒 Gegevens worden alleen lokaal opgeslagen op dit apparaat</p>
+  </div>
+</div>
+
+<!-- ===== SIDEBAR OVERLAY ===== -->
+<div id="sidebar-overlay" onclick="closeSidebar()"></div>
+
+<!-- ===== CHAT SIDEBAR ===== -->
+<div id="chat-sidebar">
+  <div class="sidebar-header">
+    <h3>🧸 Knorri</h3>
+    <div class="sidebar-user" id="sidebar-username">Laden...</div>
+  </div>
+  <button class="sidebar-new-chat" onclick="newChat()">
+    ✏️ Nieuw gesprek
+  </button>
+  <div class="sidebar-section-label">Recente chats</div>
+  <div class="chat-history-list" id="chat-history-list"></div>
+  <div class="sidebar-bottom">
+    <button class="sidebar-logout" onclick="doLogout()">🚪 Uitloggen</button>
+  </div>
+</div>
+
+
+<!-- ===== SUBSCRIPTION MODAL ===== -->
+<div id="sub-modal">
+  <div class="sub-card">
+    <button onclick="closeSubModal()" style="position:absolute;top:16px;right:16px;background:none;border:none;font-size:20px;cursor:pointer;color:var(--soft)">✕</button>
+    <div class="sub-header">
+      <div style="font-size:40px">👑</div>
+      <h2>Knorri Premium</h2>
+      <p>Kies het plan dat bij jou past</p>
+    </div>
+
+    <div class="sub-current" id="sub-current-plan">
+      ✨ Huidig plan: <span id="current-plan-name">Gratis</span>
+    </div>
+
+    <!-- FREE -->
+    <div class="plan-card" id="plan-free">
+      <div class="plan-header">
+        <div>
+          <div class="plan-name">🆓 Gratis</div>
+          <div style="font-size:10px;color:var(--soft);font-weight:700;margin-top:2px">Voor iedereen</div>
+        </div>
+        <div class="plan-price">
+          <div class="amount">€0</div>
+          <div class="period">voor altijd</div>
+        </div>
+      </div>
+      <ul class="plan-features">
+        <li>20 berichten per dag</li>
+        <li>Chat & Planning</li>
+        <li>Doelen bijhouden</li>
+        <li class="no">Onbeperkte berichten</li>
+        <li class="no">Beat Lab & Mode Lab</li>
+        <li class="no">Verhaal Studio</li>
+        <li class="no">Toekomst voorspelling</li>
+      </ul>
+      <button class="plan-btn plan-btn-free" onclick="selectPlan('free')">Huidig plan</button>
+    </div>
+
+    <!-- PLUS -->
+    <div class="plan-card popular" id="plan-plus">
+      <div class="plan-popular-badge">⭐ MEEST GEKOZEN</div>
+      <div class="plan-header">
+        <div>
+          <div class="plan-name" style="color:var(--purple)">💜 Plus</div>
+          <div style="font-size:10px;color:var(--soft);font-weight:700;margin-top:2px">Voor dagelijks gebruik</div>
+        </div>
+        <div class="plan-price">
+          <div class="amount">€2,99</div>
+          <div class="period">per maand</div>
+        </div>
+      </div>
+      <ul class="plan-features">
+        <li>200 berichten per dag</li>
+        <li>Alle basis tabs</li>
+        <li>Beat Lab & Mode Lab</li>
+        <li>Verhaal Studio</li>
+        <li class="no">Onbeperkte berichten</li>
+        <li class="no">Toekomst voorspelling</li>
+        <li class="no">Priority AI (sneller)</li>
+      </ul>
+      <button class="plan-btn plan-btn-plus" onclick="selectPlan('plus')">Probeer Plus — €2,99/mnd</button>
+    </div>
+
+    <!-- PRO -->
+    <div class="plan-card" id="plan-pro">
+      <div class="plan-header">
+        <div>
+          <div class="plan-name" style="color:#D97706">🏆 Pro</div>
+          <div style="font-size:10px;color:var(--soft);font-weight:700;margin-top:2px">Voor serieuze gebruikers</div>
+        </div>
+        <div class="plan-price">
+          <div class="amount" style="color:#D97706">€6,99</div>
+          <div class="period">per maand</div>
+        </div>
+      </div>
+      <ul class="plan-features">
+        <li>500 berichten per dag</li>
+        <li>Alle Plus features</li>
+        <li>Toekomst voorspelling</li>
+        <li>Game Dev studio</li>
+        <li>Kook Chef (onbeperkt)</li>
+        <li class="no">Onbeperkte berichten</li>
+        <li class="no">Custom Knorri naam & uiterlijk</li>
+      </ul>
+      <button class="plan-btn plan-btn-pro" onclick="selectPlan('pro')">Start Pro — €6,99/mnd</button>
+    </div>
+
+    <!-- ULTRA -->
+    <div class="plan-card" id="plan-ultra">
+      <div class="plan-header">
+        <div>
+          <div class="plan-name" style="color:#D8B4FE">🌟 Ultra</div>
+          <div style="font-size:10px;color:var(--soft);font-weight:700;margin-top:2px">Alles onbeperkt</div>
+        </div>
+        <div class="plan-price">
+          <div class="amount" style="color:#A855F7">€12,99</div>
+          <div class="period">per maand</div>
+        </div>
+      </div>
+      <ul class="plan-features">
+        <li>♾️ Onbeperkte berichten</li>
+        <li>Alle Pro features</li>
+        <li>Priority AI (2x sneller)</li>
+        <li>Custom Knorri naam & kleur</li>
+        <li>Vroege toegang nieuwe features</li>
+        <li>Directe support van Dani</li>
+      </ul>
+      <button class="plan-btn plan-btn-ultra" onclick="selectPlan('ultra')">Ga Ultra — €12,99/mnd</button>
+    </div>
+
+    <!-- HOE BETALEN stap voor stap -->
+    <div id="payment-steps" style="display:none">
+      <div style="font-family:'Fredoka One',cursive;font-size:16px;color:var(--purple);margin:16px 0 10px">
+        💳 Hoe betalen?
+      </div>
+      <div class="checkout-steps">
+        <div class="checkout-step">
+          <div class="cs-num">1</div>
+          <div class="cs-text">Klik op de knop van het plan. Je wordt doorgestuurd naar <strong>Stripe</strong> — de veiligste betaalservice ter wereld (gebruikt door Spotify, Apple, etc.)</div>
+        </div>
+        <div class="checkout-step">
+          <div class="cs-num">2</div>
+          <div class="cs-text">Voer je <strong>e-mailadres en creditcard/iDEAL</strong> in op de Stripe pagina. Stripe slaat dit veilig op — Knorri ziet je betaalgegevens nooit.</div>
+        </div>
+        <div class="checkout-step">
+          <div class="cs-num">3</div>
+          <div class="cs-text">Na betaling krijg je een <strong>bevestigingsmail</strong> en word je automatisch teruggestuurd naar Knorri met je plan actief.</div>
+        </div>
+        <div class="checkout-step">
+          <div class="cs-num">4</div>
+          <div class="cs-text">Het geld gaat automatisch elke maand naar <strong>jouw bankrekening</strong> via Stripe Payouts (dagelijks of wekelijks, jij kiest).</div>
+        </div>
+      </div>
+      <div style="background:#D1FAE5;border-radius:12px;padding:10px 12px;margin-top:10px;font-size:11px;font-weight:700;color:#059669">
+        ✅ Stripe houdt 1,4% + €0,25 per transactie in. De rest gaat naar jou!
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- LIMIT BANNER -->
+<div id="limit-banner">
+  <div class="limit-text" id="limit-text">Je hebt je dagelijkse limiet bereikt 🔒</div>
+  <button class="limit-upgrade-btn" onclick="openSubModal()">👑 Upgrade</button>
+</div>
+
+</body>
+</html>
