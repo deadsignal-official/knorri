@@ -1,14 +1,19 @@
 {
   "name": "Knorri - Jouw Slimme Buddy",
   "short_name": "Knorri",
-  "description": "Jouw persoonlijke AI-buddy voor alles!",
-  "start_url": "/",
-  "scope": "/",
+  "description": "Knorri is jouw slimme AI buddy voor projecten, school, ideeën en dagelijks leven.",
+  "start_url": "/knorri/",
+  "scope": "/knorri/",
   "display": "standalone",
+  "display_override": ["window-controls-overlay", "standalone"],
   "orientation": "portrait",
   "background_color": "#FFF5F9",
   "theme_color": "#FF6B9D",
   "lang": "nl",
+  "dir": "ltr",
+  "id": "knorri-ai-buddy",
+  "categories": ["productivity", "education", "utilities"],
+
   "icons": [
     {
       "src": "icon-192.png",
@@ -21,6 +26,35 @@
       "sizes": "512x512",
       "type": "image/png",
       "purpose": "any maskable"
+    }
+  ],
+
+  "screenshots": [
+    {
+      "src": "screenshot1.png",
+      "sizes": "540x720",
+      "type": "image/png",
+      "form_factor": "narrow"
+    },
+    {
+      "src": "screenshot2.png",
+      "sizes": "1280x720",
+      "type": "image/png",
+      "form_factor": "wide"
+    }
+  ],
+
+  "shortcuts": [
+    {
+      "name": "Chat met Knorri",
+      "short_name": "Chat",
+      "url": "/knorri/",
+      "icons": [
+        {
+          "src": "icon-192.png",
+          "sizes": "192x192"
+        }
+      ]
     }
   ]
 }
