@@ -1321,7 +1321,7 @@ initMemory();
 <script>
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', () => {
-    navigator.serviceWorker.register('./sw.js')
+    navigator.serviceWorker.register('/knorri/sw.js')
       .then(r => console.log('Knorri SW actief ✅'))
       .catch(e => console.log('SW fout:', e));
   });
