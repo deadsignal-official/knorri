@@ -1,0 +1,1069 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<meta name="theme-color" content="#0D0118">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Knorri">
+<link rel="manifest" href="manifest.json">
+<link rel="apple-touch-icon" href="icon-512.png">
+<title>Knorri AI</title>
+<link href="https://fonts.googleapis.com/css2?family=Fredoka+One&family=Quicksand:wght@500;600;700&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{height:100%;overflow:hidden;font-family:'Quicksand',sans-serif}
+:root{
+  --bg:#03000A;--bg2:#0D0118;
+  --card:rgba(255,255,255,0.04);--card-b:rgba(255,255,255,0.08);
+  --v:#8B5CF6;--p:#FF2D92;--c:#00E5FF;--g:#00E676;--y:#FFD700;--r:#FF4444;
+  --text:#F0E8FF;--soft:rgba(240,232,255,0.45);
+  --gv:rgba(139,92,246,0.3);--gp:rgba(255,45,146,0.25);
+}
+body{background:var(--bg);color:var(--text)}
+body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
+  background:radial-gradient(ellipse 80% 50% at 20% 0%,rgba(139,92,246,0.15),transparent 60%),
+             radial-gradient(ellipse 60% 40% at 80% 100%,rgba(255,45,146,0.1),transparent 60%)}
+#stars{position:fixed;inset:0;pointer-events:none;z-index:0;overflow:hidden}
+.star{position:absolute;border-radius:50%;background:#fff;animation:twinkle var(--d,3s) var(--delay,0s) infinite alternate}
+@keyframes twinkle{from{opacity:.1;transform:scale(1)}to{opacity:.8;transform:scale(1.3)}}
+#app{position:relative;z-index:1;height:100dvh;display:flex;flex-direction:column;max-width:430px;margin:0 auto}
+
+/* ── AUTH ── */
+#auth{position:fixed;inset:0;z-index:1000;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:20px;
+  background:radial-gradient(ellipse at 50% 30%,rgba(139,92,246,0.2),var(--bg) 70%)}
+.auth-bear{position:relative;margin-bottom:20px}
+.auth-bear-glow{position:absolute;inset:-16px;border-radius:50%;background:radial-gradient(circle,rgba(0,229,255,0.3),transparent 70%);animation:gpulse 2.5s ease-in-out infinite}
+@keyframes gpulse{0%,100%{opacity:.6;transform:scale(1)}50%{opacity:1;transform:scale(1.08)}}
+.auth-svg{width:86px;height:86px;filter:drop-shadow(0 0 18px rgba(0,229,255,0.5));animation:float 3s ease-in-out infinite}
+@keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-7px)}}
+.auth-title{font-family:'Fredoka One',cursive;font-size:30px;background:linear-gradient(135deg,var(--c),var(--v),var(--p));-webkit-background-clip:text;-webkit-text-fill-color:transparent;letter-spacing:2px;margin-bottom:4px;text-align:center}
+.auth-sub{font-size:12px;color:var(--soft);font-weight:700;margin-bottom:24px;text-align:center}
+.auth-box{width:100%;max-width:360px;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.09);border-radius:24px;padding:22px 18px;backdrop-filter:blur(20px)}
+.atabs{display:flex;background:rgba(0,0,0,0.3);border-radius:11px;padding:3px;margin-bottom:18px}
+.atab{flex:1;padding:8px;text-align:center;border:none;background:transparent;color:var(--soft);font-family:'Quicksand',sans-serif;font-size:12px;font-weight:700;border-radius:9px;cursor:pointer;transition:all .2s}
+.atab.active{background:linear-gradient(135deg,var(--v),var(--p));color:#fff}
+.aform{display:flex;flex-direction:column;gap:11px}
+.aform.hide{display:none}
+.flabel{font-size:10px;font-weight:700;color:var(--soft);letter-spacing:.5px;text-transform:uppercase;display:block;margin-bottom:4px}
+.finput{background:rgba(255,255,255,0.06);border:1.5px solid rgba(255,255,255,0.09);border-radius:11px;padding:10px 13px;font-family:'Quicksand',sans-serif;font-size:13px;font-weight:600;color:var(--text);outline:none;transition:border-color .2s;width:100%;-webkit-appearance:none}
+.finput:focus{border-color:var(--v)}
+.finput::placeholder{color:rgba(240,232,255,0.2)}
+.aerr{background:rgba(255,68,68,0.15);border:1px solid rgba(255,68,68,0.3);border-radius:9px;padding:8px 12px;font-size:11px;font-weight:700;color:#FF8888;display:none}
+.abtn{background:linear-gradient(135deg,var(--v),var(--p));border:none;border-radius:12px;padding:12px;font-family:'Quicksand',sans-serif;font-size:14px;font-weight:700;color:#fff;cursor:pointer;box-shadow:0 4px 18px rgba(139,92,246,0.35);transition:transform .15s;margin-top:2px}
+.abtn:active{transform:scale(0.97)}
+.anote{font-size:10px;color:var(--soft);text-align:center;margin-top:10px;font-weight:600}
+
+/* ── HEADER ── */
+#hdr{display:none;align-items:center;gap:9px;padding:10px 14px 8px;flex-shrink:0;border-bottom:1px solid var(--card-b);background:rgba(3,0,10,0.75);backdrop-filter:blur(20px);position:sticky;top:0;z-index:50}
+.hmenu{width:34px;height:34px;background:var(--card);border:1px solid var(--card-b);border-radius:9px;display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:15px;flex-shrink:0}
+.htitle{font-family:'Fredoka One',cursive;font-size:17px;background:linear-gradient(135deg,var(--c),var(--v));-webkit-background-clip:text;-webkit-text-fill-color:transparent;letter-spacing:1px}
+.hbadge{display:flex;align-items:center;gap:4px;padding:3px 9px;border-radius:18px;font-size:10px;font-weight:700;background:rgba(139,92,246,0.12);border:1px solid rgba(139,92,246,0.25);color:var(--v);cursor:pointer;margin-left:auto;flex-shrink:0}
+.havatar{width:32px;height:32px;border-radius:50%;background:linear-gradient(135deg,var(--v),var(--p));display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0;cursor:pointer;border:2px solid rgba(139,92,246,0.35)}
+
+/* ── TABS ── */
+#tabs{display:none;flex-shrink:0;background:rgba(3,0,10,0.6);backdrop-filter:blur(20px);border-bottom:1px solid var(--card-b);overflow-x:auto;scrollbar-width:none;padding:0 6px}
+#tabs::-webkit-scrollbar{display:none}
+.tab{display:inline-flex;flex-direction:column;align-items:center;gap:2px;padding:7px 9px;border:none;background:transparent;cursor:pointer;min-width:50px;position:relative}
+.tab .ti{font-size:17px;transition:transform .2s}.tab .tl{font-size:8px;font-weight:700;color:var(--soft);white-space:nowrap;font-family:'Quicksand',sans-serif}
+.tab.active .tl{color:var(--v)}.tab.active .ti{transform:scale(1.12)}
+.tab.active::after{content:'';position:absolute;bottom:0;left:15%;width:70%;height:2px;background:linear-gradient(90deg,var(--v),var(--p));border-radius:2px 2px 0 0}
+
+/* ── MAIN ── */
+#main{flex:1;overflow-y:auto;overflow-x:hidden}
+#main::-webkit-scrollbar{width:3px}
+#main::-webkit-scrollbar-thumb{background:rgba(139,92,246,.25);border-radius:2px}
+.screen{display:none;padding:13px;animation:fadeUp .25s ease}
+.screen.active{display:block}
+@keyframes fadeUp{from{opacity:0;transform:translateY(7px)}to{opacity:1;transform:translateY(0)}}
+
+/* ── CARDS ── */
+.card{background:var(--card);border:1px solid var(--card-b);border-radius:17px;padding:14px;margin-bottom:11px;backdrop-filter:blur(10px)}
+.ctitle{font-family:'Fredoka One',cursive;font-size:13px;color:var(--v);margin-bottom:9px;display:flex;align-items:center;gap:5px}
+.stitle{font-family:'Fredoka One',cursive;font-size:16px;color:var(--text);margin-bottom:11px}
+
+/* ── BUTTONS ── */
+.btn{background:linear-gradient(135deg,var(--v),var(--p));border:none;border-radius:11px;padding:10px 16px;font-family:'Quicksand',sans-serif;font-size:12px;font-weight:700;color:#fff;cursor:pointer;transition:transform .15s;box-shadow:0 4px 14px rgba(139,92,246,0.3)}
+.btn:active{transform:scale(0.96)}
+.btn-full{width:100%;padding:12px;font-size:13px;border-radius:13px}
+.btn-ghost{background:var(--card);border:1px solid var(--card-b);color:var(--v);box-shadow:none}
+
+/* ── INPUTS ── */
+input,textarea,select{font-family:'Quicksand',sans-serif;font-size:13px;font-weight:600;background:rgba(255,255,255,0.05);border:1.5px solid var(--card-b);border-radius:10px;padding:8px 11px;color:var(--text);outline:none;transition:border-color .2s;width:100%;-webkit-appearance:none}
+input:focus,textarea:focus,select:focus{border-color:var(--v)}
+input::placeholder,textarea::placeholder{color:rgba(240,232,255,.2)}
+textarea{resize:none}
+select option{background:#1a0a2e;color:var(--text)}
+
+/* ── HOLOGRAM ── */
+.holo-wrap{display:flex;flex-direction:column;align-items:center;padding:14px 0 6px;position:relative}
+.holo-ring{position:absolute;top:0;left:50%;transform:translateX(-50%);width:155px;height:155px;border-radius:50%;border:1px solid rgba(0,229,255,0.18);animation:rspin 8s linear infinite}
+.holo-ring::before{content:'';position:absolute;top:50%;left:-4px;width:7px;height:7px;background:var(--c);border-radius:50%;box-shadow:0 0 10px var(--c);transform:translateY(-50%)}
+.holo-ring2{position:absolute;top:10px;left:50%;transform:translateX(-50%);width:135px;height:135px;border-radius:50%;border:1px solid rgba(139,92,246,0.12);animation:rspin 5s linear infinite reverse}
+@keyframes rspin{to{transform:translateX(-50%) rotate(360deg)}}
+.holo-svg{width:108px;height:108px;filter:drop-shadow(0 0 12px rgba(0,229,255,0.55)) drop-shadow(0 0 28px rgba(139,92,246,0.35));animation:hfloat 3s ease-in-out infinite;position:relative;z-index:1}
+@keyframes hfloat{0%,100%{transform:translateY(0) rotate(-1deg)}50%{transform:translateY(-7px) rotate(1deg)}}
+.holo-scanlines{position:absolute;top:0;left:50%;transform:translateX(-50%);width:108px;height:108px;background:repeating-linear-gradient(0deg,transparent,transparent 3px,rgba(0,229,255,0.035) 3px,rgba(0,229,255,0.035) 4px);pointer-events:none;z-index:2;border-radius:50%}
+.holo-name{font-family:'Fredoka One',cursive;font-size:21px;margin-top:7px;background:linear-gradient(135deg,var(--c),var(--v),var(--p));-webkit-background-clip:text;-webkit-text-fill-color:transparent;letter-spacing:2px}
+.holo-status{font-size:10px;font-weight:700;color:var(--c);letter-spacing:1.5px;margin-top:2px;text-transform:uppercase;display:flex;align-items:center;gap:4px}
+.sdot{width:5px;height:5px;background:var(--c);border-radius:50%;animation:blink 1.5s infinite}
+@keyframes blink{0%,100%{opacity:1;box-shadow:0 0 5px var(--c)}50%{opacity:.3;box-shadow:none}}
+
+/* ── CHAT ── */
+.chips{display:flex;gap:5px;flex-wrap:wrap;margin-bottom:9px}
+.chip{background:var(--card);border:1px solid var(--card-b);border-radius:18px;padding:5px 11px;font-family:'Quicksand',sans-serif;font-size:11px;font-weight:700;color:var(--v);cursor:pointer;white-space:nowrap;transition:all .15s}
+.chip:active{background:rgba(139,92,246,.15);border-color:var(--v)}
+.msgs{display:flex;flex-direction:column;gap:9px;min-height:100px}
+.msg{max-width:86%;padding:9px 12px;border-radius:15px;font-size:13px;line-height:1.55;font-weight:600;animation:minIn .2s cubic-bezier(.34,1.56,.64,1)}
+@keyframes minIn{from{opacity:0;transform:scale(.88)}to{opacity:1;transform:scale(1)}}
+.msg-k{background:rgba(139,92,246,0.09);border:1px solid rgba(139,92,246,0.18);align-self:flex-start;border-bottom-left-radius:4px}
+.msg-u{background:linear-gradient(135deg,var(--v),var(--p));color:#fff;align-self:flex-end;border-bottom-right-radius:4px;box-shadow:0 2px 14px rgba(139,92,246,0.28)}
+.msender{font-size:9.5px;font-weight:700;margin-bottom:3px;opacity:.6;text-transform:uppercase;letter-spacing:.4px}
+.msg-k .msender{color:var(--c)}.msg-u .msender{color:rgba(255,255,255,.7)}
+.typing{display:flex;gap:4px;padding:10px 12px}
+.td{width:6px;height:6px;background:var(--v);border-radius:50%;animation:tdot 1.2s infinite}
+.td:nth-child(2){animation-delay:.2s}.td:nth-child(3){animation-delay:.4s}
+@keyframes tdot{0%,60%,100%{transform:translateY(0);opacity:.4}30%{transform:translateY(-6px);opacity:1}}
+.cin-row{display:flex;gap:6px;align-items:flex-end;margin-top:9px}
+.cin-row textarea{flex:1;border-radius:12px;padding:9px 11px;max-height:78px}
+.sbtn{width:40px;height:40px;flex-shrink:0;border:none;border-radius:11px;cursor:pointer;background:linear-gradient(135deg,var(--v),var(--p));font-size:16px;box-shadow:0 4px 13px rgba(139,92,246,.38);display:flex;align-items:center;justify-content:center;transition:transform .15s}
+.sbtn:active{transform:scale(.93)}.sbtn:disabled{opacity:.4}
+.lbar{display:none;background:linear-gradient(135deg,rgba(255,215,0,.12),rgba(255,100,0,.12));border:1px solid rgba(255,200,0,.2);border-radius:11px;padding:8px 11px;margin-bottom:8px;align-items:center;gap:7px}
+.lbar.show{display:flex}
+.lbar-txt{flex:1;font-size:11px;font-weight:700;color:var(--y)}
+.lbar-btn{background:rgba(255,215,0,.15);border:1px solid rgba(255,215,0,.25);border-radius:8px;padding:4px 10px;font-family:'Quicksand',sans-serif;font-size:11px;font-weight:700;color:var(--y);cursor:pointer;white-space:nowrap}
+
+/* ── MOOD ── */
+.mgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:7px}
+.mbtn{background:var(--card);border:1.5px solid var(--card-b);border-radius:13px;padding:13px 5px;cursor:pointer;text-align:center;transition:all .2s;display:flex;flex-direction:column;align-items:center;gap:4px}
+.mbtn.sel{border-color:var(--v);background:rgba(139,92,246,.09);transform:scale(1.05)}
+.me{font-size:25px}.ml{font-size:10px;font-weight:700;color:var(--soft)}
+
+/* ── PLANNING ── */
+.drow{display:flex;gap:4px;overflow-x:auto;scrollbar-width:none;margin-bottom:10px}
+.drow::-webkit-scrollbar{display:none}
+.dbtn{flex-shrink:0;padding:6px 11px;border-radius:9px;border:1px solid var(--card-b);background:var(--card);font-family:'Quicksand',sans-serif;font-size:10px;font-weight:700;color:var(--soft);cursor:pointer;transition:all .2s}
+.dbtn.active{background:linear-gradient(135deg,var(--v),var(--p));color:#fff;border-color:transparent}
+.titem{display:flex;align-items:center;gap:8px;padding:9px 10px;background:var(--card);border:1px solid var(--card-b);border-radius:10px;margin-bottom:5px}
+.titem.done{opacity:.4}.titem.done .ttext{text-decoration:line-through}
+.tchk{width:18px;height:18px;border-radius:6px;border:1.5px solid var(--card-b);cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:10px;transition:all .2s}
+.titem.done .tchk{background:var(--g);border-color:var(--g);color:#000}
+.ttext{font-size:12px;font-weight:700;flex:1}
+.ctag{padding:2px 7px;border-radius:7px;font-size:9px;font-weight:700;text-transform:uppercase}
+.ct-school{background:rgba(255,215,0,.12);color:var(--y)}.ct-sport{background:rgba(0,230,118,.12);color:var(--g)}
+.ct-hobby{background:rgba(139,92,246,.12);color:var(--v)}.ct-eten{background:rgba(255,45,146,.12);color:var(--p)}
+
+/* ── GOALS ── */
+.gitem{background:var(--card);border:1px solid var(--card-b);border-radius:12px;padding:11px;margin-bottom:7px}
+.grow{display:flex;align-items:center;justify-content:space-between;margin-bottom:6px}
+.gname{font-size:12px;font-weight:700}
+.gbar{height:5px;background:rgba(255,255,255,.07);border-radius:3px;overflow:hidden;margin-bottom:3px}
+.gfill{height:100%;border-radius:3px;background:linear-gradient(90deg,var(--v),var(--p));transition:width .5s ease}
+.gpct{font-size:9.5px;font-weight:700;color:var(--soft)}
+.gctrl{display:flex;gap:4px;align-items:center}
+.gbtn{background:var(--card);border:1px solid var(--card-b);border-radius:6px;padding:2px 7px;cursor:pointer;font-weight:700;font-size:11px;font-family:'Quicksand',sans-serif;color:var(--text)}
+
+/* ── STATS ── */
+.sgrid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:11px}
+.sbox{background:var(--card);border:1px solid var(--card-b);border-radius:14px;padding:13px;text-align:center}
+.sicon{font-size:25px;display:block;margin-bottom:4px}
+.snum{font-family:'Fredoka One',cursive;font-size:25px;color:var(--v)}
+.slbl{font-size:10px;font-weight:700;color:var(--soft);margin-top:2px}
+.ach{display:flex;align-items:center;gap:9px;background:var(--card);border:1px solid var(--card-b);border-radius:11px;padding:10px;margin-bottom:6px}
+.aicon{width:36px;height:36px;border-radius:9px;background:rgba(139,92,246,.12);display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0}
+.ainfo{flex:1}.ainfo h4{font-size:11px;font-weight:700}.ainfo p{font-size:10px;color:var(--soft);font-weight:600}
+.abadge{background:linear-gradient(135deg,rgba(255,215,0,.18),rgba(255,150,0,.18));color:var(--y);border:1px solid rgba(255,215,0,.25);padding:2px 8px;border-radius:7px;font-size:9px;font-weight:700;flex-shrink:0}
+
+/* ── SETTINGS ── */
+.slabel{font-size:10px;font-weight:700;color:var(--soft);text-transform:uppercase;letter-spacing:.5px;display:block;margin-bottom:4px}
+.keywrap{position:relative}.keywrap input{padding-right:38px}
+.keyeye{position:absolute;right:10px;top:50%;transform:translateY(-50%);background:none;border:none;cursor:pointer;font-size:14px;color:var(--soft)}
+
+/* ── SIDEBAR ── */
+#sidebar{position:fixed;top:0;left:-285px;width:285px;height:100dvh;z-index:200;background:rgba(3,0,10,0.96);backdrop-filter:blur(30px);border-right:1px solid var(--card-b);transition:left .3s cubic-bezier(.34,1.2,.64,1);display:flex;flex-direction:column}
+#sidebar.open{left:0}
+#sbov{position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:199;display:none;backdrop-filter:blur(3px)}
+#sbov.show{display:block}
+.sbhead{padding:48px 15px 13px;border-bottom:1px solid var(--card-b)}
+.sbuser{display:flex;align-items:center;gap:9px;margin-bottom:3px}
+.sbav{width:40px;height:40px;border-radius:50%;background:linear-gradient(135deg,var(--v),var(--p));display:flex;align-items:center;justify-content:center;font-size:19px;flex-shrink:0}
+.sbname{font-size:14px;font-weight:700}.sbemail{font-size:10px;color:var(--soft);font-weight:600}
+.sbplan{display:inline-flex;align-items:center;gap:4px;padding:2px 8px;border-radius:9px;font-size:10px;font-weight:700;margin-top:5px;background:rgba(139,92,246,.12);color:var(--v);border:1px solid rgba(139,92,246,.22)}
+.sbnew{margin:10px;background:linear-gradient(135deg,var(--v),var(--p));border:none;border-radius:11px;padding:9px 13px;color:#fff;font-family:'Quicksand',sans-serif;font-size:12px;font-weight:700;cursor:pointer;display:flex;align-items:center;gap:7px;width:calc(100% - 20px)}
+.sbsec{font-size:9px;font-weight:700;color:var(--soft);letter-spacing:1.5px;text-transform:uppercase;padding:7px 15px 3px}
+.clist{flex:1;overflow-y:auto;padding:0 9px 9px}
+.clist::-webkit-scrollbar{width:2px}
+.clist::-webkit-scrollbar-thumb{background:rgba(139,92,246,.15);border-radius:2px}
+.chi{display:flex;align-items:center;gap:7px;padding:8px 7px;border-radius:9px;cursor:pointer;transition:background .15s;margin-bottom:2px}
+.chi:hover,.chi.active{background:rgba(139,92,246,.13)}
+.chi-ic{font-size:14px;flex-shrink:0}.chi-t{font-size:11px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;flex:1}
+.chi-d{font-size:9.5px;color:var(--soft);font-weight:600}
+.chi-del{background:none;border:none;cursor:pointer;font-size:12px;opacity:0;transition:opacity .15s;color:var(--soft)}
+.chi:hover .chi-del{opacity:.55}
+.sbbottom{border-top:1px solid var(--card-b);padding:11px 15px}
+.sbout{width:100%;background:var(--card);border:1px solid var(--card-b);border-radius:9px;padding:8px;font-family:'Quicksand',sans-serif;font-size:11px;font-weight:700;color:var(--soft);cursor:pointer}
+
+/* ── SUB MODAL ── */
+#submod{position:fixed;inset:0;z-index:500;background:rgba(0,0,0,.78);backdrop-filter:blur(12px);display:none;align-items:center;justify-content:center;padding:15px}
+#submod.show{display:flex}
+.subcard{background:rgba(13,1,24,.96);border:1px solid rgba(139,92,246,.28);border-radius:22px;padding:22px 18px;max-width:415px;width:100%;max-height:90dvh;overflow-y:auto;animation:fadeUp .3s ease}
+.subcard::-webkit-scrollbar{display:none}
+.pbox{border:1.5px solid var(--card-b);border-radius:14px;padding:14px;margin-bottom:9px;position:relative;cursor:pointer;transition:border-color .2s}
+.pbox:hover{border-color:var(--v)}.pbox.pop{border-color:var(--v)}
+.ppop{position:absolute;top:-9px;left:50%;transform:translateX(-50%);background:linear-gradient(135deg,var(--v),var(--p));color:#fff;font-size:9px;font-weight:700;padding:2px 12px;border-radius:18px;white-space:nowrap}
+.phead{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:8px}
+.ptitle{font-family:'Fredoka One',cursive;font-size:16px}
+.pprice .big{font-family:'Fredoka One',cursive;font-size:19px;color:var(--v)}
+.pprice .sm{font-size:9px;color:var(--soft);font-weight:700}
+.pfeats{list-style:none;display:flex;flex-direction:column;gap:3px}
+.pfeats li{font-size:11px;font-weight:700;display:flex;align-items:center;gap:5px}
+.pfeats li::before{content:'✓';color:var(--g);font-weight:900}
+.pfeats li.no{color:var(--soft)}.pfeats li.no::before{content:'✕';color:var(--r)}
+.pact{width:100%;margin-top:10px;padding:10px;border-radius:10px;border:none;cursor:pointer;font-family:'Quicksand',sans-serif;font-size:12px;font-weight:700;transition:transform .15s}
+.pact:active{transform:scale(0.97)}
+.pa-free{background:var(--card);color:var(--soft)}
+.pa-plus{background:linear-gradient(135deg,var(--v),var(--p));color:#fff}
+.pa-pro{background:linear-gradient(135deg,#D97706,#F59E0B);color:#fff}
+.pa-ultra{background:linear-gradient(135deg,#0D0118,var(--v));color:#fff;border:1px solid var(--v)}
+
+/* ── KOFI MODAL ── */
+#kofi-modal{position:fixed;inset:0;z-index:600;background:rgba(0,0,0,.85);backdrop-filter:blur(14px);display:none;align-items:center;justify-content:center;padding:16px}
+#kofi-modal.show{display:flex}
+.kofi-card{background:rgba(13,1,24,.97);border:1px solid rgba(255,45,146,.3);border-radius:22px;padding:24px 20px;max-width:380px;width:100%;animation:fadeUp .3s ease}
+.kofi-title{font-family:'Fredoka One',cursive;font-size:20px;text-align:center;margin-bottom:4px}
+.kofi-sub{font-size:11px;color:var(--soft);text-align:center;font-weight:700;margin-bottom:18px}
+.kofi-steps{display:flex;flex-direction:column;gap:10px;margin-bottom:18px}
+.kstep{display:flex;gap:10px;align-items:flex-start}
+.knum{width:24px;height:24px;background:linear-gradient(135deg,var(--v),var(--p));color:#fff;border-radius:7px;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:900;flex-shrink:0;margin-top:1px}
+.ktxt{font-size:12px;font-weight:700;color:var(--text);line-height:1.5}
+.ktxt strong{color:var(--p)}
+.kofi-btn{width:100%;padding:13px;border-radius:13px;border:none;cursor:pointer;font-family:'Quicksand',sans-serif;font-size:14px;font-weight:700;background:linear-gradient(135deg,#FF5E5E,var(--p));color:#fff;box-shadow:0 4px 18px rgba(255,45,146,0.35);margin-bottom:8px}
+.kofi-verify-btn{width:100%;padding:11px;border-radius:12px;border:1px solid var(--card-b);cursor:pointer;font-family:'Quicksand',sans-serif;font-size:12px;font-weight:700;background:var(--card);color:var(--v)}
+.kofi-note{font-size:10px;color:var(--soft);text-align:center;margin-top:10px;font-weight:600;line-height:1.5}
+
+/* ── AI BOX ── */
+.aibox{background:rgba(139,92,246,.07);border:1px solid rgba(139,92,246,.18);border-radius:12px;padding:12px;font-size:12px;font-weight:600;line-height:1.7;margin-top:8px;white-space:pre-wrap}
+.ltxt{text-align:center;padding:18px;color:var(--soft);font-size:12px;font-weight:700}
+.spin{display:inline-block;width:13px;height:13px;border:2.5px solid rgba(139,92,246,.2);border-top-color:var(--v);border-radius:50%;animation:sp .7s linear infinite;vertical-align:middle;margin-right:5px}
+@keyframes sp{to{transform:rotate(360deg)}}
+.addrow{display:flex;gap:6px;margin-top:9px}
+.addrow input{flex:1}
+.addbtn{background:linear-gradient(135deg,var(--v),var(--p));border:none;border-radius:10px;padding:8px 13px;color:#fff;font-family:'Quicksand',sans-serif;font-size:11px;font-weight:700;cursor:pointer;white-space:nowrap}
+
+/* ── POPUP ── */
+#popup{position:fixed;top:68px;left:50%;transform:translateX(-50%);z-index:400;background:rgba(13,1,24,.92);border:1px solid var(--card-b);border-radius:10px;padding:7px 16px;font-size:11px;font-weight:700;color:var(--text);opacity:0;transition:opacity .3s;white-space:nowrap;pointer-events:none;backdrop-filter:blur(10px)}
+</style>
+</head>
+<body>
+<div id="stars"></div>
+
+<!-- ═══════════════════════════════════════════════════════
+     AUTH
+═══════════════════════════════════════════════════════ -->
+<div id="auth">
+  <div class="auth-bear">
+    <div class="auth-bear-glow"></div>
+    <svg class="auth-svg" viewBox="0 0 100 100" id="auth-svg">
+      <defs>
+        <radialGradient id="bg1" cx="50%" cy="40%"><stop offset="0%" stop-color="#C4B5FD"/><stop offset="100%" stop-color="#7C3AED"/></radialGradient>
+        <radialGradient id="fg1" cx="50%" cy="40%"><stop offset="0%" stop-color="#EDE9FE"/><stop offset="100%" stop-color="#C4B5FD"/></radialGradient>
+      </defs>
+      <circle cx="50" cy="55" r="29" fill="url(#bg1)"/>
+      <circle cx="26" cy="28" r="12" fill="url(#bg1)"/><circle cx="74" cy="28" r="12" fill="url(#bg1)"/>
+      <circle cx="26" cy="28" r="7" fill="url(#fg1)" opacity=".7"/><circle cx="74" cy="28" r="7" fill="url(#fg1)" opacity=".7"/>
+      <circle cx="50" cy="52" r="22" fill="url(#fg1)"/>
+      <circle cx="43" cy="48" r="3.5" fill="#1E0A3C"/><circle cx="57" cy="48" r="3.5" fill="#1E0A3C"/>
+      <circle cx="44.5" cy="46.5" r="1.2" fill="white" opacity=".9"/><circle cx="58.5" cy="46.5" r="1.2" fill="white" opacity=".9"/>
+      <ellipse cx="50" cy="56" rx="3.5" ry="2.5" fill="#FF2D92"/>
+      <path id="auth-mouth" d="M 42 61 Q 50 66 58 61" stroke="#1E0A3C" stroke-width="2" fill="none" stroke-linecap="round"/>
+    </svg>
+  </div>
+  <div class="auth-title">KNORRI AI</div>
+  <div class="auth-sub">Jouw slimme AI buddy ✨</div>
+  <div class="auth-box">
+    <div class="atabs">
+      <button class="atab active" id="at-li" onclick="switchTab('li')">Inloggen</button>
+      <button class="atab" id="at-reg" onclick="switchTab('reg')">Account maken</button>
+    </div>
+    <div id="aerr" class="aerr"></div>
+    <!-- LOGIN -->
+    <div class="aform" id="form-li">
+      <div><label class="flabel">E-mail of gebruikersnaam</label><input class="finput" type="text" id="li-id" placeholder="jij@example.com" autocomplete="username"></div>
+      <div><label class="flabel">Wachtwoord</label><input class="finput" type="password" id="li-pw" placeholder="••••••••" autocomplete="current-password"></div>
+      <button class="abtn" onclick="doLogin()">Inloggen 🚀</button>
+    </div>
+    <!-- REGISTER -->
+    <div class="aform hide" id="form-reg">
+      <div><label class="flabel">Naam</label><input class="finput" type="text" id="reg-nm" placeholder="Jouw naam" autocomplete="name"></div>
+      <div><label class="flabel">E-mailadres</label><input class="finput" type="email" id="reg-em" placeholder="jij@example.com" autocomplete="email"></div>
+      <div><label class="flabel">Wachtwoord (min. 6 tekens)</label><input class="finput" type="password" id="reg-pw" placeholder="••••••••" autocomplete="new-password"></div>
+      <button class="abtn" onclick="doRegister()">Account maken ✨</button>
+    </div>
+    <div class="anote">🔒 Gegevens worden alleen lokaal opgeslagen</div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════
+     APP
+═══════════════════════════════════════════════════════ -->
+<div id="app" style="display:none">
+  <div id="hdr">
+    <div class="hmenu" onclick="openSB()">☰</div>
+    <span class="htitle">KNORRI</span>
+    <div class="hbadge" onclick="openSub()" id="plan-badge">✨ Gratis</div>
+    <div class="havatar" id="hdr-av" onclick="openSB()">D</div>
+  </div>
+
+  <div id="tabs">
+    <button class="tab active" data-s="chat" onclick="go('chat',this)"><span class="ti">💬</span><span class="tl">Knorri</span></button>
+    <button class="tab" data-s="mood" onclick="go('mood',this)"><span class="ti">😊</span><span class="tl">Gevoel</span></button>
+    <button class="tab" data-s="plan" onclick="go('plan',this)"><span class="ti">📅</span><span class="tl">Planning</span></button>
+    <button class="tab" data-s="goals" onclick="go('goals',this)"><span class="ti">⭐</span><span class="tl">Doelen</span></button>
+    <button class="tab" data-s="stats" onclick="go('stats',this)"><span class="ti">📊</span><span class="tl">Stats</span></button>
+    <button class="tab" data-s="settings" onclick="go('settings',this)"><span class="ti">⚙️</span><span class="tl">Instellingen</span></button>
+  </div>
+
+  <div id="main">
+
+    <!-- CHAT -->
+    <div class="screen active" id="screen-chat">
+      <div class="holo-wrap">
+        <div class="holo-ring"></div><div class="holo-ring2"></div>
+        <div style="position:relative">
+          <svg class="holo-svg" viewBox="0 0 100 100" id="knorri-svg">
+            <defs>
+              <radialGradient id="bg2" cx="50%" cy="40%"><stop offset="0%" stop-color="#C4B5FD"/><stop offset="100%" stop-color="#7C3AED"/></radialGradient>
+              <radialGradient id="fg2" cx="50%" cy="40%"><stop offset="0%" stop-color="#EDE9FE"/><stop offset="100%" stop-color="#C4B5FD"/></radialGradient>
+              <linearGradient id="hg" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#00E5FF"/><stop offset="50%" stop-color="#8B5CF6"/><stop offset="100%" stop-color="#FF2D92"/></linearGradient>
+            </defs>
+            <circle cx="50" cy="50" r="46" fill="none" stroke="url(#hg)" stroke-width="1.5" opacity="0.45"/>
+            <circle cx="50" cy="55" r="29" fill="url(#bg2)"/>
+            <circle cx="26" cy="28" r="12" fill="url(#bg2)"/><circle cx="74" cy="28" r="12" fill="url(#bg2)"/>
+            <circle cx="26" cy="28" r="7" fill="url(#fg2)" opacity=".7"/><circle cx="74" cy="28" r="7" fill="url(#fg2)" opacity=".7"/>
+            <circle cx="50" cy="52" r="22" fill="url(#fg2)"/>
+            <circle cx="43" cy="48" r="3.5" fill="#1E0A3C"/><circle cx="57" cy="48" r="3.5" fill="#1E0A3C"/>
+            <circle cx="44.5" cy="46.5" r="1.2" fill="white" opacity=".9"/><circle cx="58.5" cy="46.5" r="1.2" fill="white" opacity=".9"/>
+            <ellipse cx="50" cy="56" rx="3.5" ry="2.5" fill="#FF2D92"/>
+            <path id="knorri-mouth" d="M 42 61 Q 50 66 58 61" stroke="#1E0A3C" stroke-width="2" fill="none" stroke-linecap="round"/>
+          </svg>
+          <div class="holo-scanlines"></div>
+        </div>
+        <div class="holo-name" id="holo-name">KNORRI</div>
+        <div class="holo-status"><span class="sdot"></span><span id="holo-status">Online</span></div>
+      </div>
+
+      <div class="lbar" id="lbar"><div class="lbar-txt" id="lbar-txt">Dagelijkse limiet bereikt 🔒</div><button class="lbar-btn" onclick="openSub()">👑 Upgrade</button></div>
+
+      <div class="chips">
+        <div class="chip" onclick="qsend('Help me met mijn Minecraft server')">🎮 Minecraft</div>
+        <div class="chip" onclick="qsend('Help me met Unreal Engine 5')">🎮 UE5</div>
+        <div class="chip" onclick="qsend('Wat moet ik vandaag eten?')">🍎 Eten</div>
+        <div class="chip" onclick="qsend('Geef me schooltips')">📚 School</div>
+        <div class="chip" onclick="qsend('Ik verveel me')">💡 Ideeën</div>
+      </div>
+
+      <div class="card">
+        <div class="msgs" id="msgs">
+          <div class="msg msg-k"><div class="msender">🧸 Knorri</div><span id="wmsg">Heeey! 🎉 Ik ben Knorri. Wat wil je doen vandaag? 💜</span></div>
+        </div>
+        <div class="cin-row">
+          <textarea id="cin" placeholder="Typ iets aan Knorri..." rows="1" onkeydown="onkey(event)" oninput="grow(this)"></textarea>
+          <button class="sbtn" id="sbtn" onclick="sendMsg()">🚀</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- MOOD -->
+    <div class="screen" id="screen-mood">
+      <div class="stitle">😊 Hoe voel jij je nu?</div>
+      <div class="card">
+        <div class="mgrid">
+          <button class="mbtn" onclick="pickMood(this,'super blij 😄')"><span class="me">😄</span><span class="ml">Super blij</span></button>
+          <button class="mbtn" onclick="pickMood(this,'goed 🙂')"><span class="me">🙂</span><span class="ml">Goed</span></button>
+          <button class="mbtn" onclick="pickMood(this,'oké 😐')"><span class="me">😐</span><span class="ml">Oké</span></button>
+          <button class="mbtn" onclick="pickMood(this,'moe 😴')"><span class="me">😴</span><span class="ml">Moe</span></button>
+          <button class="mbtn" onclick="pickMood(this,'verdrietig 😢')"><span class="me">😢</span><span class="ml">Verdrietig</span></button>
+          <button class="mbtn" onclick="pickMood(this,'gestrest 😤')"><span class="me">😤</span><span class="ml">Gestrest</span></button>
+          <button class="mbtn" onclick="pickMood(this,'boos 😠')"><span class="me">😠</span><span class="ml">Boos</span></button>
+          <button class="mbtn" onclick="pickMood(this,'opgewonden 🤩')"><span class="me">🤩</span><span class="ml">Opgewonden</span></button>
+          <button class="mbtn" onclick="pickMood(this,'angstig 😰')"><span class="me">😰</span><span class="ml">Angstig</span></button>
+        </div>
+      </div>
+      <div id="mood-resp" style="display:none" class="aibox"></div>
+    </div>
+
+    <!-- PLANNING -->
+    <div class="screen" id="screen-plan">
+      <div class="stitle">📅 Jouw Week</div>
+      <div class="drow" id="drow">
+        <button class="dbtn" onclick="pickDay(0)">Ma</button><button class="dbtn" onclick="pickDay(1)">Di</button>
+        <button class="dbtn" onclick="pickDay(2)">Wo</button><button class="dbtn" onclick="pickDay(3)">Do</button>
+        <button class="dbtn" onclick="pickDay(4)">Vr</button><button class="dbtn" onclick="pickDay(5)">Za</button>
+        <button class="dbtn" onclick="pickDay(6)">Zo</button>
+      </div>
+      <div class="card">
+        <div id="tlist"></div>
+        <div class="addrow"><input type="text" id="tin" placeholder="Nieuwe taak..." onkeydown="if(event.key==='Enter')addTask()"><button class="addbtn" onclick="addTask()">+ Voeg toe</button></div>
+      </div>
+    </div>
+
+    <!-- GOALS -->
+    <div class="screen" id="screen-goals">
+      <div class="stitle">⭐ Mijn Doelen</div>
+      <div class="card">
+        <div id="glist"></div>
+        <div class="addrow"><input type="text" id="gin" placeholder="Nieuw doel..." onkeydown="if(event.key==='Enter')addGoal()"><button class="addbtn" onclick="addGoal()">+ Doel</button></div>
+      </div>
+      <div id="goal-ai" style="display:none" class="aibox"></div>
+    </div>
+
+    <!-- STATS -->
+    <div class="screen" id="screen-stats">
+      <div class="stitle">📊 Statistieken</div>
+      <div class="sgrid" id="sgrid"></div>
+      <div class="stitle" style="font-size:14px">🏆 Prestaties</div>
+      <div id="achlist"></div>
+    </div>
+
+    <!-- SETTINGS -->
+    <div class="screen" id="screen-settings">
+      <div class="stitle">⚙️ Instellingen</div>
+      <div class="card">
+        <div class="ctitle">🔑 Groq API Key</div>
+        <p style="font-size:11px;color:var(--soft);font-weight:600;margin-bottom:10px;line-height:1.5">Gratis via <strong style="color:var(--v)">console.groq.com</strong> → API Keys → Create. Begint met <code style="color:var(--c)">gsk_...</code></p>
+        <div style="margin-bottom:10px"><span class="slabel">API Key</span><div class="keywrap"><input type="password" id="key-in" placeholder="gsk_..." autocomplete="off"><button class="keyeye" onclick="toggleEye()">👁️</button></div></div>
+        <button class="btn btn-full" onclick="saveKey()">💾 Opslaan</button>
+        <div id="key-ok" style="display:none;margin-top:7px;color:var(--g);font-size:12px;font-weight:700;text-align:center">✅ Opgeslagen! Knorri is klaar.</div>
+      </div>
+      <div class="card">
+        <div class="ctitle">👑 Abonnement</div>
+        <div id="plan-info" style="font-size:12px;font-weight:700;margin-bottom:10px;color:var(--soft)"></div>
+        <button class="btn btn-full" onclick="openSub()">Upgraden →</button>
+      </div>
+      <div class="card">
+        <div class="ctitle">👤 Account</div>
+        <div id="acc-info" style="font-size:12px;font-weight:700;margin-bottom:10px;color:var(--soft)"></div>
+        <button class="btn btn-full" style="background:rgba(255,68,68,.12);border:1px solid rgba(255,68,68,.22);color:#FF8888;box-shadow:none" onclick="doLogout()">🚪 Uitloggen</button>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- SIDEBAR -->
+<div id="sbov" onclick="closeSB()"></div>
+<div id="sidebar">
+  <div class="sbhead">
+    <div class="sbuser">
+      <div class="sbav" id="sb-av">D</div>
+      <div><div class="sbname" id="sb-nm">Laden...</div><div class="sbemail" id="sb-em"></div></div>
+    </div>
+    <div class="sbplan" id="sb-plan">✨ Gratis</div>
+  </div>
+  <button class="sbnew" onclick="newChat()">✏️ Nieuw gesprek</button>
+  <div class="sbsec">Recente gesprekken</div>
+  <div class="clist" id="clist"></div>
+  <div class="sbbottom"><button class="sbout" onclick="doLogout()">🚪 Uitloggen</button></div>
+</div>
+
+<!-- POPUP -->
+<div id="popup"></div>
+
+<!-- SUB MODAL -->
+<div id="submod">
+  <div class="subcard">
+    <button onclick="closeSub()" style="float:right;background:none;border:none;color:var(--soft);font-size:19px;cursor:pointer;margin-bottom:6px">✕</button>
+    <div style="text-align:center;margin-bottom:16px">
+      <div style="font-size:34px;margin-bottom:5px">👑</div>
+      <div style="font-family:'Fredoka One',cursive;font-size:19px">Knorri Premium</div>
+      <div style="font-size:10px;color:var(--soft);font-weight:700;margin-top:2px">Kies het plan dat bij jou past</div>
+    </div>
+
+    <div class="pbox" id="pb-free">
+      <div class="phead"><div><div class="ptitle">🆓 Gratis</div><div style="font-size:10px;color:var(--soft);font-weight:700;margin-top:2px">Voor iedereen</div></div><div class="pprice"><div class="big">€0</div><div class="sm">voor altijd</div></div></div>
+      <ul class="pfeats"><li>20 berichten per dag</li><li>Chat, Planning & Doelen</li><li class="no">Onbeperkte berichten</li><li class="no">Premium features</li></ul>
+      <button class="pact pa-free" onclick="closeSub()">Huidig plan</button>
+    </div>
+
+    <div class="pbox pop" id="pb-plus">
+      <div class="ppop">⭐ MEEST GEKOZEN</div>
+      <div class="phead"><div><div class="ptitle" style="color:var(--v)">💜 Plus</div><div style="font-size:10px;color:var(--soft);font-weight:700;margin-top:2px">Dagelijks gebruik</div></div><div class="pprice"><div class="big">€2,99</div><div class="sm">/maand</div></div></div>
+      <ul class="pfeats"><li>200 berichten per dag</li><li>Alle basis features</li><li>Beat Lab & Mode Lab</li><li class="no">Onbeperkt</li></ul>
+      <button class="pact pa-plus" onclick="startKofi('plus')">Probeer Plus — €2,99/mnd</button>
+    </div>
+
+    <div class="pbox" id="pb-pro">
+      <div class="phead"><div><div class="ptitle" style="color:#D97706">🏆 Pro</div><div style="font-size:10px;color:var(--soft);font-weight:700;margin-top:2px">Serieuze gebruikers</div></div><div class="pprice"><div class="big" style="color:#D97706">€6,99</div><div class="sm">/maand</div></div></div>
+      <ul class="pfeats"><li>500 berichten per dag</li><li>Alle Plus features</li><li>Toekomst voorspelling</li><li class="no">Onbeperkt</li></ul>
+      <button class="pact pa-pro" onclick="startKofi('pro')">Start Pro — €6,99/mnd</button>
+    </div>
+
+    <div class="pbox" id="pb-ultra">
+      <div class="phead"><div><div class="ptitle" style="color:var(--c)">🌟 Ultra</div><div style="font-size:10px;color:var(--soft);font-weight:700;margin-top:2px">Alles onbeperkt</div></div><div class="pprice"><div class="big" style="color:var(--c)">€12,99</div><div class="sm">/maand</div></div></div>
+      <ul class="pfeats"><li>♾️ Onbeperkte berichten</li><li>Alle Pro features</li><li>Priority AI (2× sneller)</li><li>Custom Knorri stijl</li></ul>
+      <button class="pact pa-ultra" onclick="startKofi('ultra')">Ga Ultra — €12,99/mnd</button>
+    </div>
+  </div>
+</div>
+
+<!-- KOFI BETAAL MODAL -->
+<div id="kofi-modal">
+  <div class="kofi-card">
+    <button onclick="closeKofi()" style="float:right;background:none;border:none;color:var(--soft);font-size:19px;cursor:pointer">✕</button>
+    <div style="font-size:32px;text-align:center;margin-bottom:8px">☕</div>
+    <div class="kofi-title" id="kofi-plan-title">Knorri Plus</div>
+    <div class="kofi-sub">Betaal via Ko-fi met iDEAL, PayPal of creditcard</div>
+    <div class="kofi-steps">
+      <div class="kstep"><div class="knum">1</div><div class="ktxt">Klik op de knop hieronder — je gaat naar <strong>Ko-fi.com/knorri</strong></div></div>
+      <div class="kstep"><div class="knum">2</div><div class="ktxt">Klik op jouw plan → kies <strong>iDEAL</strong> (ING) of PayPal</div></div>
+      <div class="kstep"><div class="knum">3</div><div class="ktxt">Betaal → kom terug naar Knorri en klik <strong>"Ik heb betaald"</strong></div></div>
+      <div class="kstep"><div class="knum">4</div><div class="ktxt">Voer je <strong>Ko-fi e-mailadres</strong> in — Knorri activeert je plan!</div></div>
+    </div>
+    <button class="kofi-btn" id="kofi-go-btn" onclick="goKofi()">☕ Naar Ko-fi om te betalen</button>
+    <button class="kofi-verify-btn" onclick="showVerify()">✅ Ik heb betaald — activeer mijn plan</button>
+    <div class="kofi-note">💜 Geld gaat direct naar Dani via Ko-fi → PayPal → ING<br>Je kunt altijd opzeggen via ko-fi.com/knorri</div>
+  </div>
+</div>
+
+<!-- KOFI VERIFY -->
+<div id="verify-modal" style="display:none;position:fixed;inset:0;z-index:700;background:rgba(0,0,0,.85);backdrop-filter:blur(14px);align-items:center;justify-content:center;padding:16px">
+  <div class="kofi-card">
+    <button onclick="closeVerify()" style="float:right;background:none;border:none;color:var(--soft);font-size:19px;cursor:pointer">✕</button>
+    <div style="font-size:32px;text-align:center;margin-bottom:8px">✅</div>
+    <div class="kofi-title">Plan activeren</div>
+    <div class="kofi-sub">Voer het e-mailadres in waarmee je betaald hebt op Ko-fi</div>
+    <div style="margin-bottom:12px"><label class="slabel">Ko-fi e-mailadres</label><input type="email" id="kofi-email" placeholder="jij@example.com" autocomplete="email"></div>
+    <div style="margin-bottom:14px"><label class="slabel">Welk plan heb je gekocht?</label>
+      <select id="kofi-plan-sel"><option value="plus">💜 Knorri Plus — €2,99/mnd</option><option value="pro">🏆 Knorri Pro — €6,99/mnd</option><option value="ultra">🌟 Knorri Ultra — €12,99/mnd</option></select>
+    </div>
+    <div id="verify-err" style="display:none;background:rgba(255,68,68,.12);border:1px solid rgba(255,68,68,.25);border-radius:9px;padding:8px 11px;font-size:11px;font-weight:700;color:#FF8888;margin-bottom:10px"></div>
+    <button class="kofi-btn" onclick="activatePlan()">🚀 Plan activeren</button>
+    <div class="kofi-note" style="margin-top:8px">Heb je net betaald maar werkt het niet?<br>Stuur een e-mail naar <strong style="color:var(--p)">dnkboussier@gmail.com</strong></div>
+  </div>
+</div>
+
+<script>
+'use strict';
+
+// ── STARS ──────────────────────────────────────────────────────
+(()=>{const c=document.getElementById('stars');for(let i=0;i<75;i++){const s=document.createElement('div');s.className='star';const z=Math.random()*2+.5;s.style.cssText=`left:${Math.random()*100}%;top:${Math.random()*100}%;width:${z}px;height:${z}px;--d:${2+Math.random()*4}s;--delay:${Math.random()*4}s`;c.appendChild(s);}})();
+
+// ── STORAGE ────────────────────────────────────────────────────
+const ls={
+  get:(k,d=null)=>{try{const v=localStorage.getItem(k);return v==null?d:JSON.parse(v)}catch{return d}},
+  set:(k,v)=>{try{localStorage.setItem(k,JSON.stringify(v))}catch{}}
+};
+
+// ── CONSTANTS ──────────────────────────────────────────────────
+// ✅ JOUW KO-FI LINKS — verander deze naar jouw echte Ko-fi tier links!
+const KOFI_LINKS = {
+  plus:  'https://ko-fi.com/knorri/tier/knorri-plus',
+  pro:   'https://ko-fi.com/knorri/tier/knorri-pro',
+  ultra: 'https://ko-fi.com/knorri/tier/knorri-ultra'
+};
+
+// ✅ JOUW EMAIL — jij krijgt altijd gratis Ultra
+const OWNER_EMAIL = 'dnkboussier@gmail.com';
+
+const PLANS = {
+  free:  {name:'Gratis', badge:'✨ Gratis', limit:20},
+  plus:  {name:'Plus',   badge:'💜 Plus',   limit:200},
+  pro:   {name:'Pro',    badge:'🏆 Pro',    limit:500},
+  ultra: {name:'Ultra',  badge:'🌟 Ultra',  limit:999999}
+};
+
+const DAYS = ['Maandag','Dinsdag','Woensdag','Donderdag','Vrijdag','Zaterdag','Zondag'];
+
+// ── STATE ──────────────────────────────────────────────────────
+let user=null, chatHistory=[], currentChatId=null;
+let curDay=(()=>{let d=new Date().getDay();return d===0?6:d-1;})();
+let tasks=ls.get('k-tasks',{});
+let goals=ls.get('k-goals',[]);
+let moodLog=ls.get('k-moods',[]);
+let usage=ls.get('k-usage',{chats:0,moods:0,goals:0});
+let talkTimer=null, mouthOpen=false;
+let pendingPlan=null;
+
+// ── MOUTH ANIMATION ────────────────────────────────────────────
+function startTalk(){
+  if(talkTimer)return;
+  mouthOpen=false;
+  talkTimer=setInterval(()=>{
+    mouthOpen=!mouthOpen;
+    const open='M 42 61 Q 50 70 58 61';
+    const close='M 42 61 Q 50 66 58 61';
+    const p=mouthOpen?open:close;
+    document.getElementById('knorri-mouth')?.setAttribute('d',p);
+    document.getElementById('auth-mouth')?.setAttribute('d',p);
+  },130);
+  const s=document.getElementById('holo-status');
+  if(s) s.textContent='Aan het typen...';
+}
+
+function stopTalk(){
+  clearInterval(talkTimer);talkTimer=null;mouthOpen=false;
+  document.getElementById('knorri-mouth')?.setAttribute('d','M 42 61 Q 50 66 58 61');
+  document.getElementById('auth-mouth')?.setAttribute('d','M 42 61 Q 50 66 58 61');
+  const s=document.getElementById('holo-status');
+  if(s) s.textContent='Online';
+}
+
+// ── POPUP ──────────────────────────────────────────────────────
+let popT=null;
+function pop(msg){
+  clearTimeout(popT);
+  const el=document.getElementById('popup');
+  el.textContent=msg;el.style.opacity='1';
+  popT=setTimeout(()=>el.style.opacity='0',3000);
+}
+
+// ── HASH ───────────────────────────────────────────────────────
+function hash(s){let h=0;for(let c of s){h=(h<<5)-h+c.charCodeAt(0);h|=0;}return h.toString(36);}
+
+// ── AUTH ───────────────────────────────────────────────────────
+function switchTab(t){
+  document.getElementById('at-li').classList.toggle('active',t==='li');
+  document.getElementById('at-reg').classList.toggle('active',t==='reg');
+  document.getElementById('form-li').classList.toggle('hide',t!=='li');
+  document.getElementById('form-reg').classList.toggle('hide',t!=='reg');
+  document.getElementById('aerr').style.display='none';
+}
+
+function showErr(msg){const e=document.getElementById('aerr');e.textContent='❌ '+msg;e.style.display='block';}
+
+function doRegister(){
+  const nm=document.getElementById('reg-nm').value.trim();
+  const em=document.getElementById('reg-em').value.trim().toLowerCase();
+  const pw=document.getElementById('reg-pw').value;
+  if(!nm)return showErr('Vul je naam in');
+  if(!em||!em.includes('@'))return showErr('Ongeldig e-mailadres');
+  if(pw.length<6)return showErr('Wachtwoord minimaal 6 tekens');
+  const users=ls.get('k-users',{});
+  if(users[em])return showErr('E-mail bestaat al — log in!');
+  users[em]={name:nm,email:em,pw:hash(pw+em),created:Date.now()};
+  ls.set('k-users',users);
+  const mem=ls.get('k-memory',{});mem.name=nm;ls.set('k-memory',mem);
+  document.getElementById('aerr').style.display='none';
+  document.getElementById('li-id').value=em;
+  document.getElementById('li-pw').value=pw;
+  switchTab('li');
+  setTimeout(doLogin,300);
+}
+
+function doLogin(){
+  const id=document.getElementById('li-id').value.trim().toLowerCase();
+  const pw=document.getElementById('li-pw').value;
+  if(!id||!pw)return showErr('Vul alles in');
+  const users=ls.get('k-users',{});
+  const u=users[id]||Object.values(users).find(u=>u.name.toLowerCase()===id);
+  if(!u)return showErr('Geen account gevonden — maak er een aan!');
+  if(hash(pw+u.email)!==u.pw)return showErr('Verkeerd wachtwoord');
+  user=u;
+  ls.set('k-session',u.email);
+  startApp();
+}
+
+function doLogout(){
+  if(!confirm('Uitloggen?'))return;
+  user=null;currentChatId=null;chatHistory=[];
+  ls.set('k-session',null);
+  document.getElementById('auth').style.display='flex';
+  document.getElementById('app').style.display='none';
+  document.getElementById('hdr').style.display='none';
+  document.getElementById('tabs').style.display='none';
+  closeSB();stopTalk();
+}
+
+function checkSession(){
+  const em=ls.get('k-session',null);
+  if(em){const users=ls.get('k-users',{});if(users[em]){user=users[em];startApp();return;}}
+  document.getElementById('auth').style.display='flex';
+}
+
+// ── START APP ──────────────────────────────────────────────────
+function startApp(){
+  document.getElementById('auth').style.display='none';
+  document.getElementById('app').style.display='flex';
+  document.getElementById('hdr').style.display='flex';
+  document.getElementById('tabs').style.display='flex';
+
+  const init=user.name.charAt(0).toUpperCase();
+  ['hdr-av','sb-av'].forEach(id=>document.getElementById(id).textContent=init);
+  document.getElementById('sb-nm').textContent=user.name;
+  document.getElementById('sb-em').textContent=user.email;
+
+  // Owner krijgt altijd Ultra gratis
+  if(user.email.toLowerCase()===OWNER_EMAIL.toLowerCase()){
+    ls.set('k-plan-'+user.email,'ultra');
+  }
+
+  const plan=getPlan();
+  updatePlanUI(plan);
+
+  const wm=document.getElementById('wmsg');
+  if(wm) wm.textContent=`Heeey ${user.name}! 🎉 Ik ben Knorri. Wat wil je doen vandaag? 💜`;
+
+  const chats=getChats();
+  if(chats.length>0) loadChat(chats[0].id);
+  else newChat();
+
+  initDays();
+
+  document.getElementById('acc-info').textContent=`${user.name} (${user.email})`;
+  document.getElementById('plan-info').textContent=`Huidig: ${PLANS[plan].badge}`;
+
+  const key=ls.get('k-groq','');
+  if(!key) setTimeout(()=>pop('⚙️ Stel je Groq API key in via Instellingen!'),1500);
+
+  renderStats();
+}
+
+// ── PLAN UTILS ─────────────────────────────────────────────────
+function getPlan(){if(!user)return'free';return ls.get('k-plan-'+user.email,'free');}
+
+function updatePlanUI(plan){
+  document.getElementById('plan-badge').textContent=PLANS[plan].badge;
+  document.getElementById('sb-plan').textContent=PLANS[plan].badge;
+  const pi=document.getElementById('plan-info');
+  if(pi) pi.textContent=`Huidig: ${PLANS[plan].badge}`;
+}
+
+function getDailyUsage(){
+  if(!user)return 0;
+  const k='k-daily-'+user.email+'-'+new Date().toDateString();
+  return ls.get(k,0);
+}
+
+function incUsage(){
+  if(!user)return;
+  const k='k-daily-'+user.email+'-'+new Date().toDateString();
+  ls.set(k,(ls.get(k,0)||0)+1);
+}
+
+function checkLimit(){
+  const plan=getPlan();
+  const limit=PLANS[plan].limit;
+  const used=getDailyUsage();
+  if(used>=limit){
+    const lb=document.getElementById('lbar');
+    document.getElementById('lbar-txt').textContent=`Limiet bereikt (${used}/${limit}). Upgrade voor meer!`;
+    lb.classList.add('show');
+    setTimeout(()=>lb.classList.remove('show'),7000);
+    return false;
+  }
+  if(used>=limit*.8&&plan!=='ultra') pop(`⚠️ Nog ${limit-used} berichten vandaag`);
+  return true;
+}
+
+// ── KOFI BETALING ──────────────────────────────────────────────
+function startKofi(plan){
+  pendingPlan=plan;
+  closeSub();
+  const names={plus:'Knorri Plus — €2,99/mnd',pro:'Knorri Pro — €6,99/mnd',ultra:'Knorri Ultra — €12,99/mnd'};
+  document.getElementById('kofi-plan-title').textContent=names[plan];
+  document.getElementById('kofi-plan-sel').value=plan;
+  document.getElementById('kofi-modal').classList.add('show');
+}
+
+function goKofi(){
+  const link=KOFI_LINKS[pendingPlan]||'https://ko-fi.com/knorri';
+  window.open(link,'_blank');
+}
+
+function closeKofi(){document.getElementById('kofi-modal').classList.remove('show');}
+
+function showVerify(){
+  closeKofi();
+  document.getElementById('verify-modal').style.display='flex';
+}
+
+function closeVerify(){document.getElementById('verify-modal').style.display='none';}
+
+function activatePlan(){
+  const email=document.getElementById('kofi-email').value.trim().toLowerCase();
+  const plan=document.getElementById('kofi-plan-sel').value;
+  const err=document.getElementById('verify-err');
+
+  if(!email||!email.includes('@')){
+    err.textContent='❌ Voer een geldig e-mailadres in';err.style.display='block';return;
+  }
+
+  // Sla activatie op — in productie zou je dit server-side verifiëren via Ko-fi webhook
+  // Nu: vertrouwen op eerlijkheid + je kunt Ko-fi dashboard checken
+  ls.set('k-plan-'+user.email,plan);
+  ls.set('k-kofi-email-'+user.email,email);
+  ls.set('k-kofi-activated-'+user.email,{plan,email,date:Date.now()});
+
+  updatePlanUI(plan);
+  closeVerify();
+  pop('🎉 '+PLANS[plan].name+' geactiveerd! Welkom! 💜');
+  err.style.display='none';
+  document.getElementById('kofi-email').value='';
+}
+
+// ── GROQ API ───────────────────────────────────────────────────
+const SYS=`Je bent Knorri, een warme enthousiaste AI buddy. Je spreekt ALTIJD in het Nederlands. Je bent speels, slim en behulpzaam. Je helpt met Minecraft servers, Unreal Engine 5, school, welzijn, planning en creatieve projecten. Gebruik spaarzaam emoji's. Houd antwoorden beknopt (max 4 zinnen tenzij uitleg nodig).`;
+
+function buildSys(){
+  const m=ls.get('k-memory',{});
+  let x='';
+  if(m.name) x+=`Naam: ${m.name}. `;
+  return SYS+(x?`\n\nWat je weet: ${x}Reageer persoonlijk.`:'');
+}
+
+async function callGroq(messages){
+  const key=ls.get('k-groq','');
+  if(!key)throw new Error('no-key');
+  const r=await fetch('https://api.groq.com/openai/v1/chat/completions',{
+    method:'POST',
+    headers:{'Content-Type':'application/json','Authorization':'Bearer '+key},
+    body:JSON.stringify({model:'llama-3.3-70b-versatile',max_tokens:1000,messages:[{role:'system',content:buildSys()},...messages]})
+  });
+  if(!r.ok){const e=await r.json().catch(()=>({}));throw new Error(r.status===401?'bad-key':e?.error?.message||'err');}
+  const d=await r.json();
+  return d.choices?.[0]?.message?.content||'Oeps! Probeer opnieuw 🧸';
+}
+
+// ── CHAT ───────────────────────────────────────────────────────
+function addMsg(role,text){
+  const m=document.getElementById('msgs');
+  document.getElementById('typing-el')?.remove();
+  const d=document.createElement('div');
+  d.className=role==='user'?'msg msg-u':'msg msg-k';
+  d.innerHTML=`<div class="msender">${role==='user'?user?.name||'Jij':'🧸 Knorri'}</div>${text}`;
+  m.appendChild(d);m.scrollTop=m.scrollHeight;
+}
+
+function showTyping(){
+  const m=document.getElementById('msgs');
+  const t=document.createElement('div');
+  t.className='msg msg-k';t.id='typing-el';
+  t.innerHTML='<div class="msender">🧸 Knorri</div><div class="typing"><span class="td"></span><span class="td"></span><span class="td"></span></div>';
+  m.appendChild(t);m.scrollTop=m.scrollHeight;
+}
+
+async function sendMsg(){
+  const inp=document.getElementById('cin');
+  const txt=inp.value.trim();if(!txt)return;
+  if(!checkLimit()){openSub();return;}
+  inp.value='';inp.style.height='auto';
+  document.getElementById('sbtn').disabled=true;
+  addMsg('user',txt);chatHistory.push({role:'user',content:txt});
+  saveChatMsg('user',txt);incUsage();
+  usage.chats++;ls.set('k-usage',usage);
+  showTyping();startTalk();
+  try{
+    const key=ls.get('k-groq','');
+    if(!key){document.getElementById('typing-el')?.remove();stopTalk();addMsg('assistant','⚙️ Voer eerst een Groq API key in via Instellingen!');document.getElementById('sbtn').disabled=false;return;}
+    const resp=await callGroq(chatHistory);
+    addMsg('assistant',resp);chatHistory.push({role:'assistant',content:resp});
+    saveChatMsg('assistant',resp);
+    if(chatHistory.length>20) chatHistory=chatHistory.slice(-20);
+  }catch(e){
+    document.getElementById('typing-el')?.remove();
+    const em={'no-key':'⚙️ Voer een Groq API key in via Instellingen!','bad-key':'🔑 Ongeldige API key. Check je key.','err':'😬 Fout van Groq. Probeer opnieuw.'};
+    addMsg('assistant',em[e.message]||'😬 Geen verbinding. Check je internet!');
+  }
+  stopTalk();document.getElementById('sbtn').disabled=false;
+}
+
+function qsend(t){document.getElementById('cin').value=t;go('chat');sendMsg();}
+function onkey(e){if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();sendMsg();}}
+function grow(el){el.style.height='auto';el.style.height=Math.min(el.scrollHeight,78)+'px';}
+
+// ── CHAT SESSIONS ──────────────────────────────────────────────
+function getChats(){if(!user)return[];return ls.get('k-chats-'+user.email,[]);}
+function saveChats(c){if(!user)return;ls.set('k-chats-'+user.email,c);}
+
+function newChat(){
+  const id='c'+Date.now();
+  const chat={id,title:'Nieuw gesprek',created:Date.now(),updated:Date.now(),messages:[{role:'assistant',content:`Heeey ${user?.name||''}! 🎉 Wat wil je doen vandaag? 💜`}]};
+  const chats=getChats();chats.unshift(chat);saveChats(chats);
+  currentChatId=id;chatHistory=[];
+  const m=document.getElementById('msgs');
+  if(m) m.innerHTML=`<div class="msg msg-k"><div class="msender">🧸 Knorri</div>Heeey ${user?.name||''}! 🎉 Wat wil je doen vandaag? 💜</div>`;
+  renderChatList();closeSB();go('chat');
+}
+
+function loadChat(id){
+  const chat=getChats().find(c=>c.id===id);if(!chat)return;
+  currentChatId=id;chatHistory=[];
+  const m=document.getElementById('msgs');if(!m)return;
+  m.innerHTML='';
+  for(const msg of chat.messages){
+    const d=document.createElement('div');
+    d.className=msg.role==='user'?'msg msg-u':'msg msg-k';
+    d.innerHTML=`<div class="msender">${msg.role==='user'?user?.name||'Jij':'🧸 Knorri'}</div>${msg.content}`;
+    m.appendChild(d);
+    if(chat.messages.indexOf(msg)>0) chatHistory.push({role:msg.role,content:msg.content});
+  }
+  m.scrollTop=m.scrollHeight;
+  renderChatList();closeSB();go('chat');
+}
+
+function saveChatMsg(role,content){
+  if(!currentChatId||!user)return;
+  const chats=getChats();
+  const chat=chats.find(c=>c.id===currentChatId);if(!chat)return;
+  chat.messages.push({role,content});
+  chat.updated=Date.now();
+  if(chat.title==='Nieuw gesprek'&&role==='user') chat.title=content.substring(0,35)+(content.length>35?'...':'');
+  saveChats(chats);renderChatList();
+}
+
+function deleteChat(id,e){
+  e.stopPropagation();
+  const chats=getChats().filter(c=>c.id!==id);saveChats(chats);
+  if(currentChatId===id){if(chats.length)loadChat(chats[0].id);else newChat();}
+  else renderChatList();
+}
+
+function renderChatList(){
+  const el=document.getElementById('clist');if(!el)return;
+  const chats=getChats();
+  if(!chats.length){el.innerHTML='<div style="padding:14px;font-size:11px;color:var(--soft);font-weight:700;text-align:center">Nog geen gesprekken</div>';return;}
+  el.innerHTML=chats.map(c=>{
+    const dt=new Date(c.updated).toLocaleDateString('nl-NL',{day:'numeric',month:'short'});
+    return `<div class="chi${c.id===currentChatId?' active':''}" onclick="loadChat('${c.id}')">
+      <span class="chi-ic">💬</span>
+      <div style="flex:1;min-width:0"><div class="chi-t">${esc(c.title)}</div><div class="chi-d">${dt}</div></div>
+      <button class="chi-del" onclick="deleteChat('${c.id}',event)">🗑️</button>
+    </div>`;
+  }).join('');
+}
+
+function esc(s){return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
+
+// ── SIDEBAR & MODALS ────────────────────────────────────────────
+function openSB(){renderChatList();document.getElementById('sidebar').classList.add('open');document.getElementById('sbov').classList.add('show');}
+function closeSB(){document.getElementById('sidebar').classList.remove('open');document.getElementById('sbov').classList.remove('show');}
+function openSub(){document.getElementById('submod').classList.add('show');}
+function closeSub(){document.getElementById('submod').classList.remove('show');}
+
+// ── NAVIGATION ─────────────────────────────────────────────────
+function go(name,btn){
+  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
+  document.querySelectorAll('.tab').forEach(b=>b.classList.remove('active'));
+  document.getElementById('screen-'+name).classList.add('active');
+  (btn||document.querySelector('[data-s="'+name+'"]'))?.classList.add('active');
+  if(name==='plan') initDays();
+  if(name==='goals') renderGoals();
+  if(name==='stats') renderStats();
+}
+
+// ── MOOD ────────────────────────────────────────────────────────
+async function pickMood(btn,mood){
+  document.querySelectorAll('.mbtn').forEach(b=>b.classList.remove('sel'));btn.classList.add('sel');
+  moodLog.push({mood,date:new Date().toDateString(),ts:Date.now()});
+  ls.set('k-moods',moodLog);usage.moods++;ls.set('k-usage',usage);
+  const r=document.getElementById('mood-resp');r.style.display='block';r.innerHTML='<span class="spin"></span> Knorri denkt...';
+  startTalk();
+  try{const resp=await callGroq([{role:'user',content:`Ik voel me nu: ${mood}. Warme reactie + één praktisch advies. Max 3 zinnen.`}]);r.innerHTML='🧸 '+resp;}
+  catch{r.innerHTML='🧸 Knorri begrijpt je gevoel. Neem een rustig momentje 💜';}
+  stopTalk();
+}
+
+// ── PLANNING ────────────────────────────────────────────────────
+function saveTasks(){ls.set('k-tasks',tasks);}
+function initDays(){
+  document.querySelectorAll('.dbtn').forEach((b,i)=>b.classList.toggle('active',i===curDay));
+  renderTasks();
+}
+function pickDay(i){curDay=i;initDays();}
+function renderTasks(){
+  const k=DAYS[curDay];const list=tasks[k]||[];
+  const el=document.getElementById('tlist');if(!el)return;
+  if(!list.length){el.innerHTML=`<div class="ltxt">Geen taken voor ${k} 🌟</div>`;return;}
+  el.innerHTML=list.map((t,i)=>`<div class="titem ${t.done?'done':''}">
+    <div class="tchk" onclick="toggleTask(${i})">${t.done?'✓':''}</div>
+    <span class="ttext">${esc(t.text)}</span>
+    <span class="ctag ct-${t.cat}">${t.cat}</span>
+  </div>`).join('');
+}
+function toggleTask(i){const k=DAYS[curDay];if(tasks[k])tasks[k][i].done=!tasks[k][i].done;saveTasks();renderTasks();}
+function addTask(){
+  const inp=document.getElementById('tin');const txt=inp.value.trim();if(!txt)return;
+  const k=DAYS[curDay];if(!tasks[k])tasks[k]=[];
+  const cats=['sport','hobby','eten'];
+  const cat=cats.find(c=>txt.toLowerCase().includes(c))||'school';
+  tasks[k].push({text:txt,done:false,cat});saveTasks();renderTasks();inp.value='';
+}
+
+// ── GOALS ───────────────────────────────────────────────────────
+function saveGoals(){ls.set('k-goals',goals);}
+function renderGoals(){
+  const el=document.getElementById('glist');if(!el)return;
+  if(!goals.length){el.innerHTML='<div class="ltxt">Voeg je eerste doel toe! 🌟</div>';return;}
+  const em={minecraft:'🎮',game:'🎮',unreal:'🎮',school:'📚',sport:'⚽',code:'💻',muziek:'🎵',spaar:'💰',voetbal:'⚽',kickbok:'🥊'};
+  el.innerHTML=goals.map((g,i)=>`<div class="gitem">
+    <div class="grow"><span class="gname">${g.emoji||'🎯'} ${esc(g.text)}</span>
+    <div class="gctrl"><button class="gbtn" onclick="updGoal(${i},-10)">−</button><button class="gbtn" onclick="updGoal(${i},10)">+</button>
+    <button style="background:none;border:none;cursor:pointer;font-size:13px;opacity:.4;color:var(--text)" onclick="delGoal(${i})">🗑️</button></div></div>
+    <div class="gbar"><div class="gfill" style="width:${g.progress}%"></div></div>
+    <div class="gpct">${g.progress}% voltooid</div>
+  </div>`).join('');
+}
+function updGoal(i,d){goals[i].progress=Math.min(100,Math.max(0,(goals[i].progress||0)+d));saveGoals();renderGoals();
+  if(goals[i].progress===100){setTimeout(()=>qsend(`Knorri! Ik heb mijn doel "${goals[i].text}" behaald! 🎉`),300);go('chat');}
+}
+function delGoal(i){goals.splice(i,1);saveGoals();renderGoals();}
+async function addGoal(){
+  const inp=document.getElementById('gin');const txt=inp.value.trim();if(!txt)return;
+  const em={minecraft:'🎮',game:'🎮',unreal:'🎮',school:'📚',sport:'⚽',code:'💻',muziek:'🎵',spaar:'💰',voetbal:'⚽',kickbok:'🥊'};
+  const emoji=Object.entries(em).find(([k])=>txt.toLowerCase().includes(k))?.[1]||'🎯';
+  goals.push({text:txt,progress:0,emoji});saveGoals();renderGoals();inp.value='';
+  usage.goals++;ls.set('k-usage',usage);
+  const box=document.getElementById('goal-ai');box.style.display='block';
+  box.innerHTML='<span class="spin"></span> Knorri maakt stappenplan...';
+  startTalk();
+  try{const r=await callGroq([{role:'user',content:`Motiverend stappenplan (4 stappen) voor: "${txt}". Max 5 zinnen.`}]);box.innerHTML='🧸 '+r;}
+  catch{box.innerHTML='🧸 Geweldig doel! Kleine stappen — jij kan dit! 💜';}
+  stopTalk();
+}
+
+// ── STATS ───────────────────────────────────────────────────────
+function renderStats(){
+  const done=Object.values(tasks).flat().filter(t=>t.done).length;
+  document.getElementById('sgrid').innerHTML=`
+    <div class="sbox"><span class="sicon">💬</span><div class="snum">${usage.chats||0}</div><div class="slbl">Chats</div></div>
+    <div class="sbox"><span class="sicon">⭐</span><div class="snum">${goals.filter(g=>g.progress===100).length}</div><div class="slbl">Doelen behaald</div></div>
+    <div class="sbox"><span class="sicon">✅</span><div class="snum">${done}</div><div class="slbl">Taken gedaan</div></div>
+    <div class="sbox"><span class="sicon">😊</span><div class="snum">${moodLog.length}</div><div class="slbl">Gevoelens</div></div>`;
+  const achs=[];
+  if((usage.chats||0)>=1)achs.push({i:'💬',n:'Eerste chat!',d:'Je hebt Knorri aangesproken',b:'Beginner'});
+  if((usage.chats||0)>=10)achs.push({i:'🔥',n:'Gezellig!',d:'10+ gesprekken gevoerd',b:'Actief'});
+  if(goals.filter(g=>g.progress===100).length>=1)achs.push({i:'🏆',n:'Doel behaald!',d:'Je eerste doel voltooid',b:'Winnaar'});
+  if(done>=5)achs.push({i:'✅',n:'Productief!',d:'5+ taken afgevinkt',b:'Doener'});
+  if(moodLog.length>=5)achs.push({i:'😊',n:'Zelfbewust',d:'5x gevoel gelogd',b:'Inzicht'});
+  document.getElementById('achlist').innerHTML=achs.length?achs.map(a=>`<div class="ach"><div class="aicon">${a.i}</div><div class="ainfo"><h4>${a.n}</h4><p>${a.d}</p></div><div class="abadge">${a.b}</div></div>`).join(''):'<div class="ltxt">Gebruik Knorri meer voor prestaties! 🏆</div>';
+}
+
+// ── SETTINGS ────────────────────────────────────────────────────
+function saveKey(){
+  const k=document.getElementById('key-in').value.trim();
+  if(k&&!k.startsWith('gsk_'))return pop('❌ Ongeldige key! Moet beginnen met gsk_');
+  ls.set('k-groq',k);
+  document.getElementById('key-ok').style.display='block';
+  setTimeout(()=>document.getElementById('key-ok').style.display='none',3000);
+  pop('✅ API key opgeslagen!');
+}
+function toggleEye(){const i=document.getElementById('key-in');i.type=i.type==='password'?'text':'password';}
+
+// ── ENTER KEYS AUTH ─────────────────────────────────────────────
+document.getElementById('li-pw').addEventListener('keydown',e=>{if(e.key==='Enter')doLogin();});
+document.getElementById('li-id').addEventListener('keydown',e=>{if(e.key==='Enter')doLogin();});
+document.getElementById('reg-pw').addEventListener('keydown',e=>{if(e.key==='Enter')doRegister();});
+
+// ── SERVICE WORKER ──────────────────────────────────────────────
+if('serviceWorker' in navigator){
+  window.addEventListener('load',()=>{
+    navigator.serviceWorker.register('./sw.js').catch(e=>console.log('SW:',e));
+  });
+}
+
+// ── INIT ────────────────────────────────────────────────────────
+checkSession();
+</script>
+</body>
+</html>
